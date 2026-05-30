@@ -1,0 +1,176 @@
+/* ═══ DASHBOARD COMPONENTS & PAGES STYLE ═══ */
+.page {
+    padding: 32px;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  
+  /* Grid Layouts */
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 32px;
+  }
+  
+  .grid-2-1 {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+    margin-bottom: 32px;
+  }
+  
+  /* Summary Cards (Beranda) */
+  .stat-card {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid var(--gray-200);
+    box-shadow: 0 4px 12px rgba(0,0,0,.02);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  
+  .stat-icon-wrap {
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+  }
+  
+  .stat-info .stat-val {
+    font-size: 22px; font-weight: 800;
+    color: var(--gray-800); line-height: 1.2;
+  }
+  
+  .stat-info .stat-lbl {
+    font-size: 12px; font-weight: 500;
+    color: var(--gray-400); margin-top: 2px;
+  }
+  
+  /* Panels / Cards Container */
+  .panel {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid var(--gray-200);
+    box-shadow: 0 4px 12px rgba(0,0,0,.02);
+    margin-bottom: 24px;
+  }
+  
+  .panel-title {
+    font-size: 15px; font-weight: 700;
+    color: var(--green-dark); margin-bottom: 16px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  
+  /* Task / SOP List Style */
+  .task-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: var(--gray-50);
+    border: 1px solid var(--gray-100);
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  
+  .task-item:hover {
+    border-color: var(--green-light);
+    background: var(--white);
+  }
+  
+  .task-checkbox {
+    width: 20px; height: 20px;
+    border: 2px solid var(--gray-400);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; color: white; transition: all .15s;
+    flex-shrink: 0;
+  }
+  
+  .task-item.checked .task-checkbox {
+    background: var(--green-bright);
+    border-color: var(--green-bright);
+  }
+  
+  .task-item.checked .task-text {
+    text-decoration: line-through;
+    color: var(--gray-400);
+  }
+  
+  .task-text {
+    flex: 1; font-size: 13px; font-weight: 500;
+    color: var(--gray-800);
+  }
+  
+  .task-day {
+    font-size: 11px; font-weight: 600;
+    padding: 3px 8px; border-radius: 6px;
+  }
+  
+  /* Weather UI */
+  .weather-hero {
+    background: linear-gradient(135deg, #4a90e2, #2c3e50);
+    color: white; border-radius: 16px; padding: 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  
+  .weather-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  
+  .weather-card {
+    background: white; border: 1px solid var(--gray-200);
+    border-radius: 12px; padding: 16px; text-align: center;
+  }
+  
+  /* Custom Table for Financial Reports */
+  .agri-table {
+    width: 100%; border-collapse: collapse; text-align: left;
+    font-size: 13px;
+  }
+  
+  .agri-table th {
+    padding: 12px 16px; background: var(--gray-50);
+    color: var(--gray-600); font-weight: 600;
+    border-bottom: 1px solid var(--gray-200);
+  }
+  
+  .agri-table td {
+    padding: 14px 16px; border-bottom: 1px solid var(--gray-100);
+    color: var(--gray-800);
+  }
+  
+  /* Form Styles */
+  .form-group {
+    margin-bottom: 16px;
+  }
+  .form-group label {
+    display: block; font-size: 12px; font-weight: 600;
+    color: var(--gray-800); margin-bottom: 6px;
+  }
+  .form-control {
+    width: 100%; padding: 10px 14px; border: 1px solid var(--gray-200);
+    border-radius: 8px; font-family: inherit; font-size: 13.5px;
+    background: var(--gray-50);
+  }
+  
+  /* Badges and Helpers */
+  .bg-green-p { background: var(--green-pale); color: var(--green-mid); }
+  .bg-yellow-p { background: var(--yellow-light); color: var(--yellow-dark); }
+  .bg-blue-p { background: #e3f2fd; color: #1565c0; }
+  .bg-red-p { background: #ffebee; color: #c62828; }
+  
+  /* Responsive Grid */
+  @media (max-width: 800px) {
+    .grid-3, .grid-2-1, .weather-grid { grid-template-columns: 1fr; }
+  }
