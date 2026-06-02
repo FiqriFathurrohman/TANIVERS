@@ -10,7 +10,7 @@
     // Data user (registrasi)
     $name      = $user->name ?? 'Petani';
     $email     = $user->email ?? '-';
-    $phone     = $user->no_hp ?? ($lahan ? $lahan->no_hp : '-'); // fallback
+    $phone     = $user->no_hp ?? ($lahan ? $lahan->no_hp : '-');
     $joinDate  = $user->created_at ? $user->created_at->format('M Y') : '-';
 
     // Alamat: prioritas dari user, fallback dari lahan
@@ -19,7 +19,7 @@
     $kecamatan = $user->kecamatan ?? ($lahan ? $lahan->kecamatan : '-');
     $alamat   = $user->alamat_rumah ?? ($provinsi != '-' ? "$kecamatan, $kota, $provinsi" : 'Belum diisi');
 
-    // Data lahan (dari pendaftaran lahan & SOP baru) – aman jika null
+    // Data lahan
     $lahanName   = $lahan ? ($lahan->nama_lahan ?? 'Belum daftar lahan') : 'Belum daftar lahan';
     $luas        = $lahan ? ($lahan->land_area ?? 0) : 0;
     $varietas    = $lahan ? ($lahan->commodity ?? '-') : '-';
@@ -29,21 +29,23 @@
     $metode      = $lahan ? ($lahan->method ?? 'Tapin') : 'Tapin';
 
     // Mapping jenis sawah
-    if ($jenisSawah == 'irigasi_teknis') $jenisLabel = 'Irigasi Teknis';
-    elseif ($jenisSawah == 'padi_genjah') $jenisLabel = 'Padi Genjah';
-    elseif ($jenisSawah == 'spesifik_lahan') $jenisLabel = 'Spesifik Lahan';
-    elseif ($jenisSawah == 'padi_hibrida') $jenisLabel = 'Padi Hibrida';
-    else $jenisLabel = $jenisSawah ?: '-';
+    $jenisLabel = match($jenisSawah) {
+        'irigasi_teknis' => 'Irigasi Teknis',
+        'padi_genjah'    => 'Padi Genjah',
+        'spesifik_lahan' => 'Spesifik Lahan',
+        'padi_hibrida'   => 'Padi Hibrida',
+        default          => $jenisSawah ?: '-'
+    };
 
-    // Statistik keuangan (dengan pengecekan tabel)
+    // Statistik keuangan
     $totalPanen = 0;
     $totalPendapatan = 0;
     $totalModal = 0;
-    if (class_exists(LogPanen::class) && Schema::hasTable('log_panen') && Schema::hasColumn('log_panen', 'user_id')) {
+    if (class_exists(LogPanen::class) && Schema::hasTable('log_panens') && Schema::hasColumn('log_panens', 'user_id')) {
         $totalPanen = LogPanen::where('user_id', $user->id)->sum('berat_panen') ?? 0;
         $totalPendapatan = LogPanen::where('user_id', $user->id)->sum('total_pendapatan') ?? 0;
     }
-    if (class_exists(LogKeuangan::class) && Schema::hasTable('log_keuangan') && Schema::hasColumn('log_keuangan', 'user_id')) {
+    if (class_exists(LogKeuangan::class) && Schema::hasTable('log_keuangans') && Schema::hasColumn('log_keuangans', 'user_id')) {
         $totalModal = LogKeuangan::where('user_id', $user->id)
                         ->where(function($q) {
                             $q->where('kategori_biaya', 'pengeluaran')
@@ -63,7 +65,7 @@
 
     // Riwayat panen
     $riwayat = collect();
-    if (class_exists(LogPanen::class) && Schema::hasTable('log_panen') && Schema::hasColumn('log_panen', 'user_id')) {
+    if (class_exists(LogPanen::class) && Schema::hasTable('log_panens') && Schema::hasColumn('log_panens', 'user_id')) {
         $riwayat = LogPanen::where('user_id', $user->id)->orderBy('created_at', 'desc')->get();
     }
 
@@ -71,222 +73,160 @@
     $musimSelesai = $riwayat->count();
 @endphp
 
-<div class="space-y-6 w-full">
-  <style>
-    /* style sama seperti sebelumnya, tidak diubah */
-    .prof-header {
-      background: linear-gradient(135deg, #1a4a1f, #2d7a35);
-      border-radius: 18px;
-      padding: 28px 32px;
-      color: white;
-      display: flex;
-      align-items: center;
-      gap: 24px;
-      margin-bottom: 24px;
-      text-align: left;
-    }
-    .prof-avatar-container {
-      position: relative;
-      width: 80px;
-      height: 80px;
-      flex-shrink: 0;
-    }
-    .prof-avatar-big {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      background: #f5c800;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 32px;
-      font-weight: 800;
-      color: #1a4a1f;
-      border: 3px solid rgba(255,255,255,.3);
-      object-fit: cover;
-      overflow: hidden;
-      cursor: pointer;
-      transition: opacity 0.2s;
-    }
-    .prof-avatar-big:hover { opacity: 0.85; }
-    .prof-avatar-container::after {
-      content: "📷";
-      position: absolute;
-      bottom: 0;
-      right: 0;
-      background: #ffffff;
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      font-size: 12px;
-      display: grid;
-      place-items: center;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-      pointer-events: none;
-      color: #1a4a1f;
-    }
-    .prof-info-block { text-align: left; }
-    .prof-info-block h2 { font-size: 22px; font-weight: 800; margin: 0; color: #ffffff; }
-    .prof-info-block p { font-size: 14px; opacity: .7; margin: 4px 0 0 0; color: rgba(255,255,255,0.85); }
-    .prof-badges { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
-    .prof-badge { background: rgba(255,255,255,.15); padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; color: #ffffff; }
-    .prof-two-col { display: grid; grid-template-columns: 1fr 1.2fr; gap: 20px; margin-bottom: 24px; }
-    .prof-card { background: #ffffff !important; border-radius: 14px; border: 1px solid #e5e7eb; overflow: hidden; padding: 24px; text-align: left; }
-    .prof-card-title { font-size: 15px; font-weight: 700; color: #1a4a1f; margin-bottom: 16px; }
-    .prof-lahan-card {
-      background: #ffffff;
-      border: 1px solid #e5e7eb;
-      border-radius: 12px;
-      padding: 16px 20px;
-      margin-bottom: 10px;
-      display: flex;
-      gap: 16px;
-      align-items: center;
-      text-align: left;
-    }
-    .prof-lahan-icon { width: 44px; height: 44px; background: #e8f5e9; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
-    .prof-lahan-info { flex: 1; }
-    .prof-lahan-info strong { font-size: 14px; font-weight: 700; color: #1f2937; display: block; }
-    .prof-lahan-meta { font-size: 12px; color: #9ca3af; margin-top: 3px; }
-    .prof-lahan-status { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; margin-left: auto; }
-    .prof-lahan-status.active { background: #e8f5e9; color: #2d7a35; }
-    .prof-lahan-status.arsip { background: #f3f4f6; color: #9ca3af; }
-    .prof-meta-list { font-size: 13px; display: flex; flex-direction: column; gap: 14px; }
-    .prof-meta-item label { color: #9ca3af; display: block; font-size: 11px; font-weight: 600; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
-    .prof-meta-item span { font-weight: 600; color: #1f2937; line-height: 1.4; display: block; }
-    .prof-chip { font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 600; background: #f3f4f6; color: #4b5563; display: inline-block; margin-top: 4px; }
-    .prof-expense-item {
-      display: flex;
-      align-items: center;
-      padding: 10px 14px;
-      background: #f9fafb;
-      border-radius: 8px;
-      border: 1px solid #e5e7eb;
-      gap: 12px;
-      margin-bottom: 8px;
-      text-align: left;
-    }
-    .prof-expense-cat { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; background: #e3f2fd; }
-    .prof-expense-info { flex: 1; }
-    .prof-expense-info strong { font-size: 13px; display: block; color: #1f2937; }
-    .prof-expense-info span { font-size: 11px; color: #9ca3af; }
-    @media (max-width: 900px) {
-      .prof-header { flex-direction: column; text-align: center; padding: 24px; }
-      .prof-info-block { text-align: center; }
-      .prof-badges { justify-content: center; }
-      .prof-two-col { grid-template-columns: 1fr; }
-    }
-  </style>
-
-  <div class="prof-header">
-    <div class="prof-avatar-container" onclick="document.getElementById('prof-file-input').click();">
-      <div id="prof-avatar-render" class="prof-avatar-big">{{ strtoupper(substr($name, 0, 2)) }}</div>
-      <input type="file" id="prof-file-input" accept="image/*" style="display: none;" onchange="handleAvatarUpload(this)">
-    </div>
-    <div class="prof-info-block">
-      <h2>{{ $name }}</h2>
-      <p>📱 {{ $phone }} · 📍 {{ $kota != '-' ? "$kecamatan, $kota" : 'Alamat belum lengkap' }}</p>
-      <div class="prof-badges">
-        <span class="prof-badge">🌾 Petani Aktif</span>
-        <span class="prof-badge">📅 Bergabung {{ $joinDate }}</span>
-        <span class="prof-badge">🏡 {{ $jumlahLahan }} Lahan Terdaftar</span>
-        <span class="prof-badge">📊 {{ $musimSelesai }} Musim Selesai</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="prof-two-col">
-    <div>
-      <div class="prof-card" style="margin-bottom: 20px;">
-        <div class="prof-card-title">🗺️ Lahan Terdaftar</div>
-        @if($lahan)
-        <div class="prof-lahan-card">
-          <div class="prof-lahan-icon">🌾</div>
-          <div class="prof-lahan-info">
-            <strong>{{ $lahanName }}</strong>
-            <div class="prof-lahan-meta">
-              📐 {{ $luas }} Ha · 💧 {{ $jenisLabel }} · 
-              <span class="prof-chip">{{ $varietas }}</span>
-            </div>
+<section class="page active pt-4" id="page-profil">
+  <div class="max-w-6xl mx-auto space-y-6">
+    <!-- Header Profil (card premium) -->
+    <div class="bg-gradient-to-r from-emerald-700 to-emerald-800 rounded-2xl shadow-lg overflow-hidden">
+      <div class="relative px-6 py-6 md:px-8 md:py-8 flex flex-col md:flex-row items-center gap-6">
+        <!-- Avatar -->
+        <div class="relative">
+          <div class="w-24 h-24 rounded-full bg-amber-400 flex items-center justify-center text-3xl font-black text-emerald-900 shadow-inner border-4 border-white/30 cursor-pointer hover:opacity-90 transition" id="avatar-placeholder" onclick="document.getElementById('prof-file-input').click()">
+            {{ strtoupper(substr($name, 0, 2)) }}
           </div>
-          <span class="prof-lahan-status active">Aktif (HST {{ $hst }})</span>
+          <div id="avatar-preview" class="w-24 h-24 rounded-full bg-cover bg-center hidden"></div>
+          <input type="file" id="prof-file-input" accept="image/*" class="hidden" onchange="handleAvatarUpload(this)">
         </div>
-        @else
-        <div class="prof-lahan-card">
-          <div class="prof-lahan-icon">🌾</div>
-          <div class="prof-lahan-info">
-            <strong>Belum ada lahan terdaftar</strong>
-            <div class="prof-lahan-meta">Silakan daftar lahan melalui menu "Daftar Lahan & SOP Baru"</div>
+        <!-- Info -->
+        <div class="flex-1 text-center md:text-left">
+          <h2 class="text-2xl font-bold text-white">{{ $name }}</h2>
+          <div class="flex flex-wrap gap-3 mt-2 justify-center md:justify-start">
+            <span class="inline-flex items-center gap-1 text-emerald-100 text-sm"><i data-lucide="phone" class="w-3.5 h-3.5"></i> {{ $phone }}</span>
+            <span class="inline-flex items-center gap-1 text-emerald-100 text-sm"><i data-lucide="map-pin" class="w-3.5 h-3.5"></i> {{ $kota != '-' ? "$kecamatan, $kota" : 'Alamat belum lengkap' }}</span>
+            <span class="inline-flex items-center gap-1 text-emerald-100 text-sm"><i data-lucide="calendar" class="w-3.5 h-3.5"></i> Bergabung {{ $joinDate }}</span>
           </div>
-        </div>
-        @endif
-      </div>
-
-      <div class="prof-card">
-        <div class="prof-card-title">📞 Informasi Kontak Detail</div>
-        <div class="prof-meta-list">
-          <div class="prof-meta-item"><label>Email</label><span>{{ $email }}</span></div>
-          <div class="prof-meta-item"><label>Nomor Telepon WhatsApp</label><span>{{ $phone }}</span></div>
-          <div class="prof-meta-item"><label>Provinsi</label><span>{{ $provinsi }}</span></div>
-          <div class="prof-meta-item"><label>Kabupaten/Kota</label><span>{{ $kota }}</span></div>
-          <div class="prof-meta-item"><label>Kecamatan</label><span>{{ $kecamatan }}</span></div>
+          <div class="flex flex-wrap gap-2 mt-3 justify-center md:justify-start">
+            <span class="bg-white/20 rounded-full px-3 py-0.5 text-xs font-medium text-white inline-flex items-center gap-1"><i data-lucide="leaf" class="w-3 h-3"></i> Petani Aktif</span>
+            <span class="bg-white/20 rounded-full px-3 py-0.5 text-xs font-medium text-white inline-flex items-center gap-1"><i data-lucide="map" class="w-3 h-3"></i> {{ $jumlahLahan }} Lahan Terdaftar</span>
+            <span class="bg-white/20 rounded-full px-3 py-0.5 text-xs font-medium text-white inline-flex items-center gap-1"><i data-lucide="bar-chart-2" class="w-3 h-3"></i> {{ $musimSelesai }} Musim Selesai</span>
+          </div>
         </div>
       </div>
     </div>
 
-    <div>
-      <div class="prof-card" style="margin-bottom: 20px;">
-        <div class="prof-card-title">📅 Riwayat Musim Tanam</div>
-        <div style="display:flex; flex-direction:column; gap:2px;">
-          @if($lahan)
-          <div class="prof-expense-item">
-            <div class="prof-expense-cat" style="background:#e8f5e9">📊</div>
-            <div class="prof-expense-info">
-              <strong>Musim Saat Ini</strong>
-              <span>{{ $varietas }} · HST {{ $hst }} · Tanam {{ $tglTanam }} · Metode {{ $metode }}</span>
-            </div>
-            <span class="text-[11px] text-green-600 font-semibold ml-auto">Berjalan</span>
+    <!-- Grid dua kolom -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Kolom kiri: Lahan & Kontak -->
+      <div class="space-y-6">
+        <!-- Lahan Terdaftar -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div class="border-b border-slate-100 px-5 py-4">
+            <h3 class="font-bold text-slate-800 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4 text-emerald-600"></i> Lahan Terdaftar</h3>
           </div>
-          @endif
-          @forelse($riwayat as $log)
-          <div class="prof-expense-item">
-            <div class="prof-expense-cat">📊</div>
-            <div class="prof-expense-info">
-              <strong>Panen {{ $log->created_at ? $log->created_at->format('F Y') : '-' }}</strong>
-              <span>{{ $log->varietas ?? '-' }} · Berat {{ number_format($log->berat_panen ?? 0, 0) }} kg</span>
+          <div class="p-5">
+            @if($lahan)
+            <div class="flex items-start gap-4">
+              <div class="p-2 bg-emerald-50 rounded-xl"><i data-lucide="sprout" class="w-6 h-6 text-emerald-600"></i></div>
+              <div class="flex-1">
+                <div class="font-bold text-slate-800">{{ $lahanName }}</div>
+                <div class="text-xs text-slate-500 mt-0.5 flex flex-wrap gap-2">
+                  <span class="inline-flex items-center gap-1"><i data-lucide="maximize" class="w-3 h-3"></i> {{ $luas }} Ha</span>
+                  <span class="inline-flex items-center gap-1"><i data-lucide="droplet" class="w-3 h-3"></i> {{ $jenisLabel }}</span>
+                  <span class="inline-flex items-center gap-1"><i data-lucide="wheat" class="w-3 h-3"></i> {{ $varietas }}</span>
+                </div>
+                <div class="mt-3 flex items-center gap-2">
+                  <div class="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                    <div class="bg-emerald-500 h-full rounded-full" style="width: {{ $hst > 0 ? min(100, round(($hst / 110)*100)) : 0 }}%"></div>
+                  </div>
+                  <span class="text-xs font-semibold text-emerald-700">HST {{ $hst }}</span>
+                </div>
+              </div>
             </div>
-            <span class="text-[11px] text-blue-600 font-semibold ml-auto">Selesai</span>
+            @else
+            <div class="text-center py-6">
+              <i data-lucide="map-pin" class="w-10 h-10 text-slate-300 mx-auto mb-2"></i>
+              <p class="text-slate-500 text-sm">Belum ada lahan terdaftar</p>
+              <button onclick="switchPage('pendaftaran')" class="mt-3 text-xs bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-full hover:bg-emerald-100 transition">Daftar Lahan Baru</button>
+            </div>
+            @endif
           </div>
-          @empty
-          <div class="prof-expense-item">
-            <div class="prof-expense-cat">📊</div>
-            <div class="prof-expense-info">
-              <strong>Belum ada riwayat panen</strong>
-              <span>Data panen akan muncul setelah Anda mengisi laporan panen.</span>
+        </div>
+
+        <!-- Informasi Kontak Detail -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div class="border-b border-slate-100 px-5 py-4">
+            <h3 class="font-bold text-slate-800 flex items-center gap-2"><i data-lucide="contact" class="w-4 h-4 text-emerald-600"></i> Informasi Kontak</h3>
+          </div>
+          <div class="p-5 space-y-3">
+            <div class="flex items-center gap-3 text-sm">
+              <i data-lucide="mail" class="w-4 h-4 text-slate-400"></i>
+              <span class="text-slate-700">{{ $email }}</span>
+            </div>
+            <div class="flex items-center gap-3 text-sm">
+              <i data-lucide="phone" class="w-4 h-4 text-slate-400"></i>
+              <span class="text-slate-700">{{ $phone }}</span>
+            </div>
+            <div class="flex items-start gap-3 text-sm">
+              <i data-lucide="map-pin" class="w-4 h-4 text-slate-400 mt-0.5"></i>
+              <div class="text-slate-700">
+                <div>{{ $provinsi != '-' ? $provinsi : '' }}</div>
+                <div>{{ $kota != '-' ? $kota : '' }}</div>
+                <div>{{ $kecamatan != '-' ? $kecamatan : '' }}</div>
+                <div class="mt-1 text-slate-500">{{ $alamat }}</div>
+              </div>
             </div>
           </div>
-          @endforelse
         </div>
       </div>
 
-      <div class="prof-card">
-        <div class="prof-card-title">🏆 Statistik Total Kumulatif</div>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-          <div style="text-align:center; padding:12px; background:#e8f5e9; border-radius:10px;">
-            <div style="font-size:22px; font-weight:800; color:#1a4a1f">{{ number_format($estimasiPanen, 1) }} T</div>
-            <div style="font-size:11px; color:#4b5563;">Total Panen GKP</div>
+      <!-- Kolom kanan: Riwayat & Statistik -->
+      <div class="space-y-6">
+        <!-- Riwayat Musim Tanam -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div class="border-b border-slate-100 px-5 py-4">
+            <h3 class="font-bold text-slate-800 flex items-center gap-2"><i data-lucide="history" class="w-4 h-4 text-emerald-600"></i> Riwayat Musim Tanam</h3>
           </div>
-          <div style="text-align:center; padding:12px; background:#fff8d6; border-radius:10px;">
-            <div style="font-size:22px; font-weight:800; color:#1a4a1f">Rp {{ number_format($estimasiPendapatan, 0, ',', '.') }}</div>
-            <div style="font-size:11px; color:#4b5563;">Pendapatan Kotor</div>
+          <div class="p-5">
+            @if($lahan)
+            <div class="flex items-center gap-3 pb-3 mb-3 border-b border-slate-100">
+              <div class="p-2 bg-emerald-50 rounded-lg"><i data-lucide="sprout" class="w-4 h-4 text-emerald-600"></i></div>
+              <div>
+                <div class="font-semibold text-slate-800">Musim Saat Ini</div>
+                <div class="text-xs text-slate-500">{{ $varietas }} · HST {{ $hst }} · Tanam {{ $tglTanam }} · {{ $metode }}</div>
+              </div>
+              <span class="ml-auto text-xs font-medium text-green-600 bg-green-50 px-2 py-0.5 rounded-full">Berjalan</span>
+            </div>
+            @endif
+            @forelse($riwayat as $log)
+            <div class="flex items-center gap-3 py-2">
+              <div class="p-2 bg-slate-100 rounded-lg"><i data-lucide="calendar-check" class="w-4 h-4 text-slate-600"></i></div>
+              <div>
+                <div class="font-semibold text-slate-800">Panen {{ $log->created_at ? $log->created_at->format('F Y') : '-' }}</div>
+                <div class="text-xs text-slate-500">{{ $log->varietas ?? $varietas }} · Berat {{ number_format($log->berat_panen ?? 0, 0) }} kg</div>
+              </div>
+              <span class="ml-auto text-xs font-medium text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">Selesai</span>
+            </div>
+            @empty
+            <div class="text-center py-4 text-slate-400 text-sm">Belum ada riwayat panen</div>
+            @endforelse
           </div>
         </div>
-        @if($totalModal > 0 || $labaBersih != 0)
-        <div class="mt-3 text-xs text-center text-slate-500">
-          Total Modal: Rp {{ number_format($totalModal,0,',','.') }} | 
-          Laba Bersih: Rp {{ number_format($labaBersih,0,',','.') }}
+
+        <!-- Statistik Total Kumulatif -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div class="border-b border-slate-100 px-5 py-4">
+            <h3 class="font-bold text-slate-800 flex items-center gap-2"><i data-lucide="trending-up" class="w-4 h-4 text-emerald-600"></i> Statistik Kumulatif</h3>
+          </div>
+          <div class="p-5 grid grid-cols-2 gap-4">
+            <div class="bg-emerald-50 rounded-xl p-3 text-center">
+              <i data-lucide="wheat" class="w-5 h-5 text-emerald-600 mx-auto mb-1"></i>
+              <div class="text-lg font-black text-emerald-800">{{ number_format($estimasiPanen, 1) }} T</div>
+              <div class="text-[10px] text-slate-500">Total Panen GKP</div>
+            </div>
+            <div class="bg-amber-50 rounded-xl p-3 text-center">
+              <i data-lucide="wallet" class="w-5 h-5 text-amber-600 mx-auto mb-1"></i>
+              <div class="text-lg font-black text-amber-800">Rp {{ number_format($estimasiPendapatan, 0, ',', '.') }}</div>
+              <div class="text-[10px] text-slate-500">Pendapatan Kotor</div>
+            </div>
+            @if($totalModal > 0)
+            <div class="bg-slate-50 rounded-xl p-3 text-center col-span-2">
+              <div class="flex justify-between text-xs font-medium text-slate-600">
+                <span>Total Modal: Rp {{ number_format($totalModal,0,',','.') }}</span>
+                <span>Laba Bersih: Rp {{ number_format($labaBersih,0,',','.') }}</span>
+              </div>
+            </div>
+            @endif
+          </div>
         </div>
-        @endif
       </div>
     </div>
   </div>
@@ -296,10 +236,22 @@
       if (input.files && input.files[0]) {
         const reader = new FileReader();
         reader.onload = function(e) {
-          document.getElementById('prof-avatar-render').innerHTML = `<img src="${e.target.result}" style="width:100%; height:100%; object-fit:cover;">`;
+          const avatarPlaceholder = document.getElementById('avatar-placeholder');
+          const avatarPreview = document.getElementById('avatar-preview');
+          avatarPlaceholder.classList.add('hidden');
+          avatarPreview.classList.remove('hidden');
+          avatarPreview.style.backgroundImage = `url('${e.target.result}')`;
+          // Kirim ke server jika ada endpoint
+          const formData = new FormData();
+          formData.append('avatar', input.files[0]);
+          fetch('/user/avatar', {
+            method: 'POST',
+            headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') },
+            body: formData
+          }).catch(err => console.log('Avatar upload error', err));
         };
         reader.readAsDataURL(input.files[0]);
       }
     }
   </script>
-</div>
+</section>

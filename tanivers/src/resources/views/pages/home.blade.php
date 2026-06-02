@@ -19,27 +19,18 @@
     $jenisSawah = $lahan?->sawah_type ?? 'Irigasi';
     $metode = $lahan?->method ?? 'Tapin';
 
-    // ============================================================
-    // PERHITUNGAN TOTAL MODAL - BERDASARKAN LAHAN ID
-    // ============================================================
+    // Hitung total modal (berdasarkan lahan_id atau periode_id)
     $totalModal = 0;
     if ($lahan && Schema::hasTable('log_keuangans')) {
-        // Coba berdasarkan lahan_id (paling relevan)
         if (Schema::hasColumn('log_keuangans', 'lahan_id')) {
             $totalModal = LogKeuangan::where('lahan_id', $lahan->id)
-                            ->where(function($q) {
-                                $q->where('kategori_biaya', 'pengeluaran')
-                                  ->orWhere('kategori_biaya', 'keluar');
-                            })->sum('nominal') ?? 0;
-        }
-        // Jika tidak ada, coba periode_id
-        if ($totalModal == 0 && Schema::hasColumn('log_keuangans', 'periode_id') && !empty($lahan->id_periode)) {
+                            ->where(function($q) { $q->where('kategori_biaya', 'pengeluaran')->orWhere('kategori_biaya', 'keluar'); })
+                            ->sum('nominal') ?? 0;
+        } elseif (Schema::hasColumn('log_keuangans', 'periode_id') && !empty($lahan->id_periode)) {
             $totalModal = LogKeuangan::where('periode_id', $lahan->id_periode)
                             ->where(function($q) { $q->where('kategori_biaya', 'pengeluaran')->orWhere('kategori_biaya', 'keluar'); })
                             ->sum('nominal') ?? 0;
-        }
-        // Terakhir coba user_id
-        if ($totalModal == 0 && Schema::hasColumn('log_keuangans', 'user_id')) {
+        } elseif (Schema::hasColumn('log_keuangans', 'user_id')) {
             $totalModal = LogKeuangan::where('user_id', $user->id)
                             ->where(function($q) { $q->where('kategori_biaya', 'pengeluaran')->orWhere('kategori_biaya', 'keluar'); })
                             ->sum('nominal') ?? 0;
@@ -91,78 +82,210 @@
 
     // Foto terbaru
     $fotoTerbaru = $lahan ? \App\Models\PhotoLog::where('lahan_id', $lahan->id)->orderBy('created_at', 'desc')->limit(3)->get() : collect();
-    
     $estPanenHari = $lahan?->tanggal_tanam ? \Carbon\Carbon::parse($lahan->tanggal_tanam)->addDays(110)->format('d F Y') : '-';
     $gpsUser = $user->gps_coords ?? '-';
     $lokasi = $user->kota ?? $user->provinsi ?? 'Lokasi tidak tersedia';
 @endphp
 
 <section class="page active pt-4" id="page-home">
+  <!-- Styles modern, tanpa emoji -->
   <style>
-    /* SAMA PERSIS SEPERTI KODE HOME ANDA SEBELUMNYA, TIDAK SAYA TULIS LAGI KARENA PANJANG */
-    .home-hero-banner { border-radius: 20px; overflow: hidden; position: relative; height: 280px; margin-bottom: 32px; background: #1a4a1f linear-gradient(135deg, #1a4a1f 0%, #2d7a35 60%, #113315 100%) !important; display: flex; align-items: center; text-align: left; box-shadow: 0 4px 20px rgba(0,0,0,.08); }
-    .home-hero-img-overlay { position: absolute; inset: 0; background-image: url('https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=1200&q=80'); background-size: cover; background-position: center 40%; opacity: .25; z-index: 1; }
-    .home-hero-content { position: relative; padding: 0 40px; z-index: 2; max-width: 600px; }
-    .home-hero-badge { display: inline-block; background: #f5c800 !important; color: #1a4a1f !important; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; letter-spacing: .6px; text-transform: uppercase; margin-bottom: 12px; }
-    .home-hero-content h1 { font-family: 'Playfair Display', serif !important; font-size: 32px !important; color: #ffffff !important; line-height: 1.25 !important; margin: 0 0 8px 0 !important; font-weight: 800 !important; }
-    .home-hero-content p { font-size: 14px !important; color: rgba(255,255,255,0.85) !important; margin: 0 0 16px 0 !important; line-height: 1.5 !important; }
-    .home-hero-farm-photos { position: absolute; right: 32px; display: flex; gap: 10px; z-index: 2; }
-    .home-farm-photo { width: 100px; height: 80px; border-radius: 12px; border: 2px solid rgba(255,255,255,.4); background: #2d7a35; overflow: hidden; }
+    .home-hero-banner {
+      border-radius: 1.5rem;
+      overflow: hidden;
+      position: relative;
+      height: 280px;
+      margin-bottom: 2rem;
+      background: linear-gradient(135deg, #0f2d1a 0%, #1a4a1f 60%, #113315 100%);
+      display: flex;
+      align-items: center;
+      text-align: left;
+      box-shadow: 0 8px 20px rgba(0,0,0,.08);
+    }
+    .home-hero-img-overlay {
+      position: absolute; inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=1200&q=80');
+      background-size: cover;
+      background-position: center 40%;
+      opacity: .2;
+      z-index: 1;
+    }
+    .home-hero-content {
+      position: relative;
+      padding: 0 2.5rem;
+      z-index: 2;
+      max-width: 600px;
+    }
+    .home-hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #f5c800;
+      color: #1a4a1f;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.25rem 0.75rem;
+      border-radius: 2rem;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+    .home-hero-content h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      color: #fff;
+      line-height: 1.25;
+      margin: 0 0 0.5rem 0;
+      font-weight: 800;
+    }
+    .home-hero-content p {
+      font-size: 0.875rem;
+      color: rgba(255,255,255,0.85);
+      margin: 0 0 1rem 0;
+      line-height: 1.5;
+    }
+    .home-hero-farm-photos {
+      position: absolute;
+      right: 2rem;
+      display: flex;
+      gap: 0.75rem;
+      z-index: 2;
+    }
+    .home-farm-photo {
+      width: 100px; height: 80px;
+      border-radius: 0.75rem;
+      border: 2px solid rgba(255,255,255,.4);
+      background: #2d7a35;
+      overflow: hidden;
+    }
     .home-farm-photo img { width: 100%; height: 100%; object-fit: cover; }
-    .home-stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
-    .home-stat-card { background: #ffffff !important; border-radius: 14px; padding: 20px 24px; border: 1px solid #e5e7eb; display: flex; align-items: flex-start; gap: 14px; box-shadow: 0 2px 8px rgba(0,0,0,.02); }
-    .home-stat-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
-    .home-stat-icon.green { background: #e8f5e9; }
-    .home-stat-icon.yellow { background: #fff8d6; }
-    .home-stat-icon.blue { background: #e8f4fd; }
-    .home-stat-icon.orange { background: #fff3e0; }
-    .home-stat-info .val { font-size: 22px; font-weight: 800; color: #1a4a1f; line-height: 1.1; }
-    .home-stat-info .lbl { font-size: 12px; color: #9ca3af; margin-top: 3px; }
-    .home-stat-info .chg { font-size: 11px; font-weight: 600; color: #3ea847; margin-top: 4px; }
-    .home-two-col { display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; margin-bottom: 24px; }
-    .home-three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
-    .home-card { background: #ffffff !important; border-radius: 14px; border: 1px solid #e5e7eb; overflow: hidden; }
-    .home-card-header { padding: 18px 20px 14px; border-bottom: 1px solid #f3f4f6; display: flex; align-items: center; justify-content: space-between; }
-    .home-card-header h3 { font-size: 14px; font-weight: 700; color: #1a4a1f; }
-    .home-card-body { padding: 16px 20px; }
-    .home-growth-bar-wrap { margin-bottom: 16px; }
-    .home-growth-label { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 12px; }
+
+    .home-stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .home-stat-card {
+      background: #fff;
+      border-radius: 1rem;
+      padding: 1.25rem 1.5rem;
+      border: 1px solid #e5e7eb;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.875rem;
+      box-shadow: 0 1px 2px rgba(0,0,0,.02);
+      transition: all 0.2s ease;
+    }
+    .home-stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(0,0,0,.05);
+    }
+    .home-stat-icon {
+      width: 44px; height: 44px;
+      border-radius: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .home-stat-icon.green { background: #e8f5e9; color: #2e7d32; }
+    .home-stat-icon.yellow { background: #fff8e1; color: #f57c00; }
+    .home-stat-icon.blue { background: #e3f2fd; color: #1565c0; }
+    .home-stat-icon.orange { background: #fff3e0; color: #e65100; }
+    .home-stat-info .val { font-size: 1.5rem; font-weight: 800; color: #1a4a1f; line-height: 1.1; }
+    .home-stat-info .lbl { font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem; }
+    .home-stat-info .chg { font-size: 0.7rem; font-weight: 600; color: #3ea847; margin-top: 0.25rem; }
+
+    .home-two-col { display: grid; grid-template-columns: 1.4fr 1fr; gap: 1.25rem; margin-bottom: 1.5rem; }
+    .home-three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-bottom: 1.5rem; }
+
+    .home-card {
+      background: #fff;
+      border-radius: 1rem;
+      border: 1px solid #e5e7eb;
+      overflow: hidden;
+      transition: box-shadow 0.2s;
+    }
+    .home-card:hover { box-shadow: 0 8px 20px rgba(0,0,0,.05); }
+    .home-card-header {
+      padding: 1rem 1.25rem 0.875rem;
+      border-bottom: 1px solid #f3f4f6;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .home-card-header h3 { font-size: 0.9rem; font-weight: 700; color: #1a4a1f; display: flex; align-items: center; gap: 0.5rem; }
+    .home-card-body { padding: 1rem 1.25rem; }
+
+    .home-growth-bar-wrap { margin-bottom: 1rem; }
+    .home-growth-label { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.75rem; }
     .home-growth-bar { height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden; }
     .home-growth-bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, #3ea847, #f5c800); }
-    .home-phase-indicator { display: flex; gap: 6px; margin-top: 12px; }
+
+    .home-phase-indicator { display: flex; gap: 0.5rem; margin-top: 0.75rem; }
     .home-phase-dot { flex: 1; height: 6px; border-radius: 3px; }
     .home-phase-dot.done { background: #3ea847; }
     .home-phase-dot.active { background: #f5c800; }
     .home-phase-dot.pending { background: #e5e7eb; }
-    .home-asset-value { font-size: 28px; font-weight: 800; color: #1a4a1f; margin: 8px 0 4px; text-align: left; }
-    .home-asset-sub { font-size: 12px; color: #9ca3af; text-align: left; }
-    .home-divider { height: 1px; background: #e5e7eb; margin: 16px 0; }
-    .home-chip { font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 600; background: #f3f4f6; color: #4b5563; }
-    .home-flex { display: flex; gap: 12px; align-items: center; }
-    .home-farm-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
-    .home-farm-strip-img { border-radius: 10px; height: 80px; background: #e8f5e9; overflow: hidden; position: relative; }
+
+    .home-asset-value { font-size: 1.75rem; font-weight: 800; color: #1a4a1f; margin: 0.5rem 0 0.25rem; }
+    .home-asset-sub { font-size: 0.7rem; color: #9ca3af; }
+    .home-divider { height: 1px; background: #e5e7eb; margin: 1rem 0; }
+    .home-chip { font-size: 0.7rem; padding: 0.25rem 0.75rem; border-radius: 2rem; font-weight: 600; background: #f3f4f6; color: #4b5563; display: inline-flex; align-items: center; gap: 0.25rem; }
+    .home-flex { display: flex; gap: 0.75rem; align-items: center; }
+
+    .home-farm-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-top: 0.5rem; }
+    .home-farm-strip-img { border-radius: 0.75rem; height: 80px; background: #e8f5e9; overflow: hidden; position: relative; }
     .home-farm-strip-img img { width: 100%; height: 100%; object-fit: cover; }
     .home-farm-strip-img .home-farm-label { position: absolute; bottom: 6px; left: 6px; background: rgba(0,0,0,.55); color: white; font-size: 9px; padding: 2px 6px; border-radius: 4px; }
-    .home-weather-days { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
-    .home-weather-day { flex: 1; min-width: 68px; background: #f9fafb; border-radius: 10px; padding: 10px 8px; text-align: center; border: 1px solid #e5e7eb; }
+
+    .home-weather-days { display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.25rem; }
+    .home-weather-day { flex: 1; min-width: 68px; background: #f9fafb; border-radius: 0.75rem; padding: 0.5rem 0.25rem; text-align: center; border: 1px solid #e5e7eb; }
     .home-weather-day.today { background: #e8f5e9; border-color: #a8d5ab; }
-    .home-wd-label { font-size: 10px; font-weight: 600; color: #9ca3af; margin-bottom: 4px; }
-    .home-wd-icon { font-size: 22px; margin-bottom: 4px; }
-    .home-wd-temp { font-size: 13px; font-weight: 700; color: #1a4a1f; }
-    .home-wd-desc { font-size: 9px; color: #9ca3af; margin-top: 2px; }
-    .home-hama-ticker { background: #fff8e1; border-radius: 40px; padding: 8px 16px; margin-bottom: 24px; border: 1px solid #ffecb3; overflow: hidden; white-space: nowrap; cursor: pointer; transition: all 0.2s; }
+    .home-wd-label { font-size: 0.6rem; font-weight: 600; color: #9ca3af; margin-bottom: 0.25rem; }
+    .home-wd-icon { font-size: 1.5rem; margin-bottom: 0.25rem; }
+    .home-wd-temp { font-size: 0.8rem; font-weight: 700; color: #1a4a1f; }
+    .home-wd-desc { font-size: 0.6rem; color: #9ca3af; margin-top: 0.125rem; }
+
+    /* Running ticker hama */
+    .home-hama-ticker {
+      background: #fff8e1;
+      border-radius: 40px;
+      padding: 0.5rem 1rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid #ffecb3;
+      overflow: hidden;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
     .home-hama-ticker:hover { background: #ffecb3; }
-    .home-hama-ticker-content { display: inline-block; animation: ticker 20s linear infinite; padding-right: 2rem; }
-    @keyframes ticker { 0% { transform: translateX(0%); } 100% { transform: translateX(-50%); } }
-    @media (max-width: 1200px) { .home-stats-row { grid-template-columns: repeat(2, 1fr); } .home-two-col { grid-template-columns: 1fr; } .home-three-col { grid-template-columns: 1fr; } .home-hero-farm-photos { display: none; } .home-hama-ticker-content { animation: none; white-space: normal; text-align: center; } }
+    .home-hama-ticker-content {
+      display: inline-block;
+      animation: ticker 20s linear infinite;
+      padding-right: 2rem;
+    }
+    @keyframes ticker {
+      0% { transform: translateX(0%); }
+      100% { transform: translateX(-50%); }
+    }
+
+    @media (max-width: 1200px) {
+      .home-stats-row { grid-template-columns: repeat(2, 1fr); }
+      .home-two-col, .home-three-col { grid-template-columns: 1fr; }
+      .home-hero-farm-photos { display: none; }
+      .home-hama-ticker-content { animation: none; white-space: normal; text-align: center; }
+    }
   </style>
 
-  <!-- Running text hama -->
+  <!-- Running text hama dengan ikon -->
   <div class="home-hama-ticker" onclick="showPage('cuaca', document.getElementById('nav-cuaca'))">
-    <div class="home-hama-ticker-content">
-      🚨 NOTIFIKASI DETEKSI HAMA: 
+    <div class="home-hama-ticker-content flex items-center gap-2">
+      <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-600"></i>
+      <span>NOTIFIKASI DETEKSI HAMA:</span>
       @forelse($hamaAktif as $hama)
-        {{ $hama->nama_hama }} ({{ $hama->status_alert }}) - {{ $hama->deskripsi_mitigasi }} 
+        {{ $hama->nama_hama }} ({{ $hama->status_alert }}) - {{ $hama->deskripsi_mitigasi }} &nbsp;&nbsp;
       @empty
         Ekosistem Terjaga Aman - Tidak ada ancaman hama signifikan untuk varietas {{ $varietas }} pada HST {{ $hst }}.
       @endforelse
@@ -173,10 +296,15 @@
   <div class="home-hero-banner">
     <div class="home-hero-img-overlay"></div>
     <div class="home-hero-content">
-      <div class="home-hero-badge">🌾 Musim Gadu 2026 · Aktif</div>
+      <div class="home-hero-badge">
+        <i data-lucide="sprout" class="w-3 h-3"></i>
+        <span>Musim Gadu 2026 · Aktif</span>
+      </div>
       <h1>Selamat {{ date('H') < 12 ? 'Pagi' : (date('H') < 18 ? 'Siang' : 'Malam') }},<br>{{ $namaPanggilan }}!</h1>
       <p>Hari ini HST ke-{{ $hst }}. Fase {{ $fase }} berjalan baik.<br>{{ $totalTugas - $totalTugasSelesai }} tugas menunggu konfirmasi Anda hari ini.</p>
-      <button class="btn-yellow" onclick="showPage('pelaksanaan', document.getElementById('nav-pelaksanaan'))">Lihat Checklist →</button>
+      <button class="inline-flex items-center gap-2 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold rounded-xl shadow transition" onclick="showPage('pelaksanaan', document.getElementById('nav-pelaksanaan'))">
+        <i data-lucide="clipboard-list" class="w-4 h-4"></i> Lihat Checklist
+      </button>
     </div>
     <div class="home-hero-farm-photos">
       <div class="home-farm-photo"><img src="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=300&q=70" alt="sawah"></div>
@@ -187,46 +315,82 @@
 
   <!-- 4 card stats -->
   <div class="home-stats-row">
-    <div class="home-stat-card"><div class="home-stat-icon green">🌾</div><div class="home-stat-info"><div class="val">{{ $hst }} HST</div><div class="lbl">Umur Padi</div><div class="chg">📈 Fase {{ $fase }}</div></div></div>
-    <div class="home-stat-card"><div class="home-stat-icon yellow">💰</div><div class="home-stat-info"><div class="val">Rp {{ number_format($totalModal, 0, ',', '.') }}</div><div class="lbl">Modal Tertanam</div><div class="chg">dari estimasi Rp {{ number_format($targetAnggaran, 0, ',', '.') }}</div></div></div>
-    <div class="home-stat-card"><div class="home-stat-icon blue">✅</div><div class="home-stat-info"><div class="val">{{ $totalTugasSelesai }} / {{ $totalTugas }}</div><div class="lbl">Tugas Selesai</div><div class="chg" style="color:#f5c800">⚡ {{ $totalTugas - $totalTugasSelesai }} tugas hari ini</div></div></div>
-    <div class="home-stat-card"><div class="home-stat-icon orange">🎯</div><div class="home-stat-info"><div class="val">{{ $targetGkp }} Ton</div><div class="lbl">Target Panen GKP</div><div class="chg">Perkiraan {{ max(0, 110 - $hst) }} hari lagi</div></div></div>
+    <div class="home-stat-card">
+      <div class="home-stat-icon green"><i data-lucide="calendar" class="w-5 h-5"></i></div>
+      <div class="home-stat-info"><div class="val">{{ $hst }} HST</div><div class="lbl">Umur Padi</div><div class="chg">📈 Fase {{ $fase }}</div></div>
+    </div>
+    <div class="home-stat-card">
+      <div class="home-stat-icon yellow"><i data-lucide="wallet" class="w-5 h-5"></i></div>
+      <div class="home-stat-info"><div class="val">Rp {{ number_format($totalModal, 0, ',', '.') }}</div><div class="lbl">Modal Tertanam</div><div class="chg">dari estimasi Rp {{ number_format($targetAnggaran, 0, ',', '.') }}</div></div>
+    </div>
+    <div class="home-stat-card">
+      <div class="home-stat-icon blue"><i data-lucide="check-circle" class="w-5 h-5"></i></div>
+      <div class="home-stat-info"><div class="val">{{ $totalTugasSelesai }} / {{ $totalTugas }}</div><div class="lbl">Tugas Selesai</div><div class="chg" style="color:#f5c800">⚡ {{ $totalTugas - $totalTugasSelesai }} tugas hari ini</div></div>
+    </div>
+    <div class="home-stat-card">
+      <div class="home-stat-icon orange"><i data-lucide="target" class="w-5 h-5"></i></div>
+      <div class="home-stat-info"><div class="val">{{ $targetGkp }} Ton</div><div class="lbl">Target Panen GKP</div><div class="chg">Perkiraan {{ max(0, 110 - $hst) }} hari lagi</div></div>
+    </div>
   </div>
 
   <!-- Dua kolom: Status Pertumbuhan & Info Lahan -->
   <div class="home-two-col">
     <div class="home-card">
-      <div class="home-card-header"><h3>🌱 Status Pertumbuhan</h3><span class="badge-phase" style="background:#f5c800;color:#1a4a1f;padding:2px 8px;border-radius:20px;font-size:10px;">{{ $fase }}</span></div>
+      <div class="home-card-header">
+        <h3><i data-lucide="trending-up" class="w-4 h-4"></i> Status Pertumbuhan</h3>
+        <span class="text-xs font-bold px-2 py-1 rounded-full bg-amber-100 text-amber-800">{{ $fase }}</span>
+      </div>
       <div class="home-card-body">
-        <div class="home-growth-bar-wrap"><div class="home-growth-label"><span>Progres Siklus</span><span>{{ $hst }} / 110 hari</span></div><div class="home-growth-bar"><div class="home-growth-bar-fill" style="width: {{ $progressSiklus }}%"></div></div></div>
-        <div class="home-phase-indicator"><div class="home-phase-dot {{ $hst >= 0 ? 'done' : 'pending' }}"></div><div class="home-phase-dot {{ $hst >= 31 ? 'done' : ($hst >= 0 ? 'active' : 'pending') }}"></div><div class="home-phase-dot {{ $hst >= 71 ? 'done' : 'pending' }}"></div></div>
-        <div style="display:flex;gap:6px;margin-top:8px;"><span style="font-size:10px;color:#2d7a35">✔ Vegetatif (0-30)</span><span style="font-size:10px;color:#c9a200">⚡ Generatif (31-70)</span><span style="font-size:10px;color:#9ca3af;">○ Pematangan (71-110)</span></div>
+        <div class="home-growth-bar-wrap">
+          <div class="home-growth-label"><span>Progres Siklus</span><span>{{ $hst }} / 110 hari</span></div>
+          <div class="home-growth-bar"><div class="home-growth-bar-fill" style="width: {{ $progressSiklus }}%"></div></div>
+        </div>
+        <div class="home-phase-indicator">
+          <div class="home-phase-dot {{ $hst >= 0 ? 'done' : 'pending' }}"></div>
+          <div class="home-phase-dot {{ $hst >= 31 ? 'done' : ($hst >= 0 ? 'active' : 'pending') }}"></div>
+          <div class="home-phase-dot {{ $hst >= 71 ? 'done' : 'pending' }}"></div>
+        </div>
+        <div class="flex gap-2 text-[10px] mt-2">
+          <span class="text-green-700 font-semibold">✔ Vegetatif (0-30)</span>
+          <span class="text-amber-600 font-semibold">⚡ Generatif (31-70)</span>
+          <span class="text-gray-400">○ Pematangan (71-110)</span>
+        </div>
         <div class="home-divider"></div>
-        <div class="home-asset-value">Rp {{ number_format($totalModal, 0, ',', '.') }}</div><div class="home-asset-sub">Modal tertanam saat ini (otomatis dihitung)</div>
+        <div class="home-asset-value">Rp {{ number_format($totalModal, 0, ',', '.') }}</div>
+        <div class="home-asset-sub">Modal tertanam saat ini (otomatis dihitung)</div>
         <div class="home-divider"></div>
-        <div style="font-size:12px;font-weight:600;color:#4b5563;margin-bottom:8px;">📸 Foto Lapangan Terbaru</div>
+        <div class="text-xs font-semibold text-gray-600 mb-2 flex items-center gap-1"><i data-lucide="camera" class="w-3.5 h-3.5"></i> Foto Lapangan Terbaru</div>
         <div class="home-farm-strip">
           @forelse($fotoTerbaru as $foto)
-          <div class="home-farm-strip-img"><img src="{{ asset($foto->file_path) }}" alt="foto HST {{ $foto->current_hst }}"><div class="home-farm-label">HST {{ $foto->current_hst }}</div></div>
+          <div class="home-farm-strip-img">
+            <img src="{{ asset($foto->file_path) }}" alt="foto HST {{ $foto->current_hst }}">
+            <div class="home-farm-label">HST {{ $foto->current_hst }}</div>
+          </div>
           @empty
-          <div class="home-farm-strip-img" style="background:#e8f5e9;display:flex;align-items:center;justify-content:center;"><span style="font-size:10px;">Belum ada foto</span></div>
-          <div class="home-farm-strip-img" style="background:#e8f5e9;display:flex;align-items:center;justify-content:center;"><span style="font-size:10px;">Belum ada foto</span></div>
-          <div class="home-farm-strip-img" style="background:#e8f5e9;display:flex;align-items:center;justify-content:center;"><span style="font-size:10px;">Belum ada foto</span></div>
+          <div class="home-farm-strip-img flex items-center justify-center text-xs text-gray-400">Belum ada foto</div>
+          <div class="home-farm-strip-img flex items-center justify-center text-xs text-gray-400">Belum ada foto</div>
+          <div class="home-farm-strip-img flex items-center justify-center text-xs text-gray-400">Belum ada foto</div>
           @endforelse
         </div>
       </div>
     </div>
 
     <div class="home-card">
-      <div class="home-card-header"><h3>📍 Info Lahan</h3></div>
+      <div class="home-card-header">
+        <h3><i data-lucide="map-pin" class="w-4 h-4"></i> Info Lahan</h3>
+      </div>
       <div class="home-card-body">
-        <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;">
-          <div class="home-flex"><span>🗺️</span><div><div style="font-weight:600">{{ $namaLahan }}</div><div style="font-size:11px;color:#9ca3af">{{ $lokasi }}</div></div></div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap;"><span class="home-chip">📐 {{ $luasLahan }} Ha</span><span class="home-chip">💧 {{ $jenisSawah }}</span><span class="home-chip">🌾 {{ $varietas }}</span></div>
+        <div class="space-y-2 text-sm">
+          <div class="home-flex"><i data-lucide="map" class="w-4 h-4 text-gray-500"></i><div><div class="font-semibold">{{ $namaLahan }}</div><div class="text-xs text-gray-500">{{ $lokasi }}</div></div></div>
+          <div class="flex flex-wrap gap-1.5">
+            <span class="home-chip"><i data-lucide="maximize" class="w-3 h-3"></i> {{ $luasLahan }} Ha</span>
+            <span class="home-chip"><i data-lucide="droplet" class="w-3 h-3"></i> {{ $jenisSawah }}</span>
+            <span class="home-chip"><i data-lucide="sprout" class="w-3 h-3"></i> {{ $varietas }}</span>
+          </div>
           <div class="home-divider"></div>
-          <div style="font-size:12px;color:#4b5563">📡 GPS: {{ $gpsUser }}</div>
-          <div style="font-size:12px;color:#4b5563">🗓️ Mulai Tanam: {{ $tanggalTanam }}</div>
-          <div style="font-size:12px;color:#4b5563">🏁 Est. Panen: {{ $estPanenHari }}</div>
+          <div class="text-xs"><i data-lucide="map-pin" class="inline w-3 h-3 mr-1"></i> GPS: {{ $gpsUser }}</div>
+          <div class="text-xs"><i data-lucide="calendar" class="inline w-3 h-3 mr-1"></i> Mulai Tanam: {{ $tanggalTanam }}</div>
+          <div class="text-xs"><i data-lucide="wheat" class="inline w-3 h-3 mr-1"></i> Est. Panen: {{ $estPanenHari }}</div>
         </div>
       </div>
     </div>
@@ -234,9 +398,32 @@
 
   <!-- Tiga kolom: Cuaca, Keuangan, Statistik Produksi -->
   <div class="home-three-col">
-    <div class="home-card"><div class="home-card-header"><h3>🌤️ Cuaca 7 Hari</h3></div><div class="home-card-body"><div class="home-weather-days" id="home-weather-container"><div class="col-span-full text-center py-6 text-xs font-bold text-slate-400">Sedang mengunduh data prakiraan cuaca...</div></div></div></div>
-    <div class="home-card"><div class="home-card-header"><h3>💰 Keuangan Musim Ini</h3></div><div class="home-card-body"><div style="display:flex;justify-content:space-between;margin-bottom:8px;"><span>Anggaran Rencana</span><span>Rp {{ number_format($targetAnggaran, 0, ',', '.') }}</span></div><div style="display:flex;justify-content:space-between;margin-bottom:8px;"><span>Sudah Keluar</span><span style="color:#e53935">Rp {{ number_format($totalModal, 0, ',', '.') }}</span></div><div style="display:flex;justify-content:space-between;margin-bottom:12px;"><span>Sisa Anggaran</span><span style="color:#2d7a35">Rp {{ number_format($sisaAnggaran, 0, ',', '.') }}</span></div><div class="home-growth-bar"><div class="home-growth-bar-fill" style="width: {{ $persenAnggaran }}%;background:linear-gradient(90deg,#2dcd3a,#ef5350)"></div></div><div style="font-size:11px;margin-top:6px;">{{ $persenAnggaran }}% anggaran terpakai</div></div></div>
-    <div class="home-card"><div class="home-card-header"><h3>📊 Statistik Produksi</h3></div><div class="home-card-body"><div style="display:flex;flex-direction:column;gap:8px;"><div style="display:flex;justify-content:space-between;"><span>Target Panen</span><span>{{ $targetGkp }} Ton</span></div><div style="display:flex;justify-content:space-between;"><span>Total Panen Real</span><span>{{ number_format($totalPanen, 0) }} Kg</span></div><div style="display:flex;justify-content:space-between;"><span>Pendapatan Kotor</span><span>Rp {{ number_format($totalPendapatan, 0, ',', '.') }}</span></div></div></div></div>
+    <div class="home-card">
+      <div class="home-card-header"><h3><i data-lucide="cloud-sun" class="w-4 h-4"></i> Cuaca 7 Hari</h3></div>
+      <div class="home-card-body">
+        <div class="home-weather-days" id="home-weather-container">
+          <div class="col-span-full text-center py-4 text-xs text-gray-400">Sedang mengunduh data...</div>
+        </div>
+      </div>
+    </div>
+    <div class="home-card">
+      <div class="home-card-header"><h3><i data-lucide="wallet" class="w-4 h-4"></i> Keuangan Musim Ini</h3></div>
+      <div class="home-card-body">
+        <div class="flex justify-between text-sm"><span>Anggaran Rencana</span><span class="font-semibold">Rp {{ number_format($targetAnggaran, 0, ',', '.') }}</span></div>
+        <div class="flex justify-between text-sm mt-1"><span>Sudah Keluar</span><span class="font-semibold text-red-600">Rp {{ number_format($totalModal, 0, ',', '.') }}</span></div>
+        <div class="flex justify-between text-sm mt-1"><span>Sisa Anggaran</span><span class="font-semibold text-green-700">Rp {{ number_format($sisaAnggaran, 0, ',', '.') }}</span></div>
+        <div class="home-growth-bar mt-3"><div class="home-growth-bar-fill" style="width: {{ $persenAnggaran }}%; background: linear-gradient(90deg,#2dcd3a,#ef5350)"></div></div>
+        <div class="text-xs text-center mt-2 text-gray-500">{{ $persenAnggaran }}% anggaran terpakai</div>
+      </div>
+    </div>
+    <div class="home-card">
+      <div class="home-card-header"><h3><i data-lucide="bar-chart-2" class="w-4 h-4"></i> Statistik Produksi</h3></div>
+      <div class="home-card-body">
+        <div class="flex justify-between text-sm"><span>Target Panen</span><span class="font-semibold">{{ $targetGkp }} Ton</span></div>
+        <div class="flex justify-between text-sm mt-1"><span>Total Panen Real</span><span class="font-semibold">{{ number_format($totalPanen, 0) }} Kg</span></div>
+        <div class="flex justify-between text-sm mt-1"><span>Pendapatan Kotor</span><span class="font-semibold">Rp {{ number_format($totalPendapatan, 0, ',', '.') }}</span></div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -244,7 +431,7 @@
   function loadWeatherForHome() {
     const container = document.getElementById('home-weather-container');
     if (!container) return;
-    container.innerHTML = '<div class="col-span-full text-center py-6 text-xs font-bold text-slate-400">⏳ Memuat prakiraan cuaca...</div>';
+    container.innerHTML = '<div class="col-span-full text-center py-4 text-xs text-gray-400">⏳ Memuat prakiraan cuaca...</div>';
     let lat = -6.2886, lon = 106.7179;
     const userGps = "{{ $user->gps_coords ?? '0,0' }}";
     if (userGps && userGps !== '0,0') {
@@ -271,16 +458,17 @@
         else if (weatherCode <= 65) icon = '🌧️';
         else if (weatherCode >= 95) icon = '⛈️';
         const bgClass = idx === 0 ? 'bg-emerald-50 border-emerald-300 ring-2 ring-emerald-600/20' : 'bg-slate-50 border-slate-200';
-        html += `<div class="${bgClass} p-3.5 rounded-2xl text-center border shadow-sm flex flex-col justify-between items-center">
-                  <span class="text-[10px] font-black ${idx === 0 ? 'text-emerald-800' : 'text-slate-400'} block uppercase tracking-wider">${dayName}</span>
-                  <span class="text-2xl block my-2">${icon}</span>
-                  <div><span class="text-xs font-black text-slate-800 block">${maxTemp}°C</span><span class="text-[9px] text-slate-400 font-medium block mt-0.5">${minTemp}°C</span></div>
+        html += `<div class="${bgClass} p-2.5 rounded-xl text-center border shadow-sm">
+                  <div class="text-[10px] font-black ${idx === 0 ? 'text-emerald-800' : 'text-slate-400'}">${dayName}</div>
+                  <div class="text-2xl my-1">${icon}</div>
+                  <div class="text-xs font-black text-slate-800">${maxTemp}°C</div>
+                  <div class="text-[9px] text-slate-400">${minTemp}°C</div>
                 </div>`;
       });
       container.innerHTML = html;
     }).catch(err => {
       console.error('Cuaca gagal dimuat:', err);
-      container.innerHTML = '<div class="col-span-full text-center py-6 text-xs font-bold text-slate-400">⚠️ Gagal memuat data cuaca</div>';
+      container.innerHTML = '<div class="col-span-full text-center py-4 text-xs text-gray-400">⚠️ Gagal memuat data cuaca</div>';
     });
   }
   document.addEventListener('DOMContentLoaded', loadWeatherForHome);

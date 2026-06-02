@@ -8,6 +8,7 @@ use App\Http\Controllers\Petani\PelaksanaanController;
 use App\Http\Controllers\Petani\LahanController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\Api\WilayahController;
+use App\Http\Controllers\UserController; // tambahkan
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
 /*
@@ -39,8 +40,6 @@ Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $requ
     return redirect()->route('dashboard.index');
 })->middleware(['auth', 'signed'])->name('verification.verify');
 
-
-
 // Semua rute yang memerlukan autentikasi
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [SOPController::class, 'index'])->name('dashboard.index');
@@ -63,4 +62,9 @@ Route::middleware(['auth'])->group(function () {
     // Manajemen lahan (pendaftaran & cek lahan aktif)
     Route::post('/petani/lahan/pendaftaran-store', [LahanController::class, 'store'])->name('lahan.store');
     Route::get('/petani/lahan/aktif', [LahanController::class, 'getActiveLahan'])->name('lahan.aktif');
+
+    // Rute untuk pengaturan akun
+    Route::put('/user/profile', [UserController::class, 'updateProfile'])->name('user.profile.update');
+    Route::put('/user/password', [UserController::class, 'updatePassword'])->name('user.password.update');
+    Route::delete('/user/delete', [UserController::class, 'deleteAccount'])->name('user.delete');
 });

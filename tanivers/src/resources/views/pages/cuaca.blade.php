@@ -14,10 +14,6 @@
 
 <div class="space-y-6 w-full">
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-200 pb-4">
-        <div>
-            <h3 class="text-lg sm:text-xl font-black text-slate-800 uppercase tracking-tight flex items-center gap-2">📡 Radar Satelit Cuaca & Geolokasi Multi-Device</h3>
-            <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">Sistem otomatis mendeteksi GPS perangkat keras dan memprediksi migrasi hama biologis sawah Anda.</p>
-        </div>
         <div id="gps-badge" class="bg-amber-50 border border-amber-200 text-amber-700 text-[10px] sm:text-[11px] font-black px-3 py-2 rounded-xl flex items-center gap-1.5 animate-pulse shrink-0">⏳ Meminta Akses GPS Perangkat...</div>
     </div>
 
@@ -87,7 +83,7 @@
         navigator.geolocation.getCurrentPosition(
             (position) => {
                 const lat = position.coords.latitude, lon = position.coords.longitude;
-                updateGpsBadge("🛰️ Satelit Terkoneksi Riil", "bg-emerald-100 text-emerald-700 border-emerald-200");
+                updateGpsBadge("🛰️ Satelit Terkoneksi", "bg-emerald-100 text-emerald-700 border-emerald-200");
                 document.getElementById('satelit-coords').innerText = `Lat: ${lat.toFixed(4)} | Lon: ${lon.toFixed(4)}`;
                 fetchCuacaSatelit(lat, lon);
                 fetchAlamatLengkapOSM(lat, lon);
@@ -118,7 +114,7 @@
             const weatherInfo = interpretasiWeatherCode(code);
             document.getElementById('satelit-main-icon').innerText = weatherInfo.icon;
             document.getElementById('satelit-main-temp').innerText = `${temp}°C`;
-            document.getElementById('satelit-main-status').innerText = `${weatherInfo.status} (Satelit Riil)`;
+            document.getElementById('satelit-main-status').innerText = `${weatherInfo.status} (Satelit)`;
             document.getElementById('satelit-humidity').innerText = `${humidity} %`;
             document.getElementById('satelit-wind').innerText = `${current.wind_speed_10m} km/h`;
             document.getElementById('satelit-cloud').innerText = `${current.cloud_cover} %`;
