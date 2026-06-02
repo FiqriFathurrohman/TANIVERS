@@ -7,6 +7,7 @@ use App\Http\Controllers\Petani\RencanaController;
 use App\Http\Controllers\Petani\PelaksanaanController;
 use App\Http\Controllers\Petani\LahanController;
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\Api\WilayahController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
 /*
@@ -37,6 +38,8 @@ Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $requ
     $request->fulfill();
     return redirect()->route('dashboard.index');
 })->middleware(['auth', 'signed'])->name('verification.verify');
+
+
 
 // Semua rute yang memerlukan autentikasi
 Route::middleware(['auth'])->group(function () {

@@ -19,7 +19,7 @@
                   <label class="block font-bold text-slate-700 text-xs uppercase tracking-wider">Nama Blok Lahan Sawah</label>
                   <div class="relative flex items-center">
                       <span class="absolute left-4 text-slate-400 pointer-events-none"><i data-lucide="map-pin" class="w-4 h-4"></i></span>
-                      <input type="text" id="input-nama-lahan" class="w-full pl-11 pr-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition bg-slate-50/30 font-medium text-slate-800 placeholder:text-slate-400" placeholder="Contoh: Sawah Blok A / Petak Selatan" required value="Sawah Blok A">
+                      <input type="text" id="input-nama-lahan" class="w-full pl-11 pr-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition bg-slate-50/30 font-medium text-slate-800 placeholder:text-slate-400" placeholder="Contoh: Sawah Blok A / Petak Selatan">
                   </div>
               </div>
 

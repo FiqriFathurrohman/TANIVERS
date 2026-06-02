@@ -36,6 +36,7 @@
     body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #fcfdfa; }
     .page-section { animation: fadeIn 0.3s ease-out; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .hidden { display: none !important; }
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: #f1f5f9; }
     ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
@@ -160,7 +161,6 @@
   </main>
 
   <script>
-    // Inisialisasi awal ikon Lucide global
     lucide.createIcons();
 
     const pageConfig = {
@@ -175,77 +175,80 @@
     };
 
     function switchPage(pageId) {
-        const sections = Object.keys(pageConfig);
-        
-        // Sembunyikan seluruh section kontainer halaman
-        sections.forEach(id => {
+        // Sembunyikan semua container halaman
+        Object.keys(pageConfig).forEach(id => {
             const el = document.getElementById('page-' + id);
-            if (el) {
-                el.classList.add('hidden');
-                const nestedSections = el.querySelectorAll('.page-section');
-                nestedSections.forEach(nested => nested.classList.add('hidden'));
-            }
+            if (el) el.classList.add('hidden');
         });
-
-        // Tampilkan halaman target aktif
+        // Tampilkan halaman yang dipilih
         const activePage = document.getElementById('page-' + pageId);
-        if (activePage) {
-            activePage.classList.remove('hidden');
-            const nestedSections = activePage.querySelectorAll('.page-section');
-            nestedSections.forEach(nested => {
-                nested.classList.remove('hidden');
-                nested.style.display = 'block';
-            });
-        }
+        if (activePage) activePage.classList.remove('hidden');
 
-        // Transisi warna link aktif menu sidebar
-        sections.forEach(nav => {
+        // Update style menu sidebar
+        Object.keys(pageConfig).forEach(nav => {
             const linkEl = document.getElementById('nav-' + nav);
             if (linkEl) {
                 if (nav === pageId) {
                     linkEl.classList.add('bg-padi-subur', 'text-white');
                     linkEl.classList.remove('hover:bg-padi-subur/20', 'text-emerald-100/80');
-                    const iconEl = linkEl.querySelector('i');
-                    if (iconEl) iconEl.style.color = '#ffffff';
+                    const icon = linkEl.querySelector('i');
+                    if (icon) icon.style.color = '#ffffff';
                 } else {
                     linkEl.classList.remove('bg-padi-subur', 'text-white');
                     linkEl.classList.add('hover:bg-padi-subur/20', 'text-emerald-100/80');
+                    const icon = linkEl.querySelector('i');
+                    if (icon) icon.style.color = '';
                 }
             }
         });
 
-        // Mutasi Header Title berdasarkan halaman aktif
+        // Update header title
         const titleContainer = document.getElementById('page-title');
         if (titleContainer && pageConfig[pageId]) {
             titleContainer.innerHTML = `<i data-lucide="${pageConfig[pageId].icon}" class="w-5 h-5 text-padi-subur"></i> ${pageConfig[pageId].title}`;
-            lucide.createIcons(); // Instansiasi ulang ikon baru yang di-render javascript
+            lucide.createIcons();
         }
 
-        // Integrasi Callback Khusus Lahan jika ada
+        // Callback khusus untuk halaman pendaftaran
         if (pageId === 'pendaftaran' && typeof window.cekStatusLahanAktif === 'function') {
             window.cekStatusLahanAktif();
         }
     }
 
-    // Jam Realtime Indonesia Barat (WIB)
+    // Fungsi untuk checkbox di halaman home
+    function toggleCheck(element) {
+        const todoItem = element.closest('.home-todo-item');
+        if (todoItem) {
+            todoItem.classList.toggle('done');
+            const checkDiv = todoItem.querySelector('.home-todo-check');
+            if (checkDiv) {
+                if (todoItem.classList.contains('done')) {
+                    checkDiv.innerHTML = '✓';
+                    checkDiv.classList.add('checked');
+                } else {
+                    checkDiv.innerHTML = '';
+                    checkDiv.classList.remove('checked');
+                }
+            }
+        }
+    }
+
+    // Jam realtime
     function startLiveClock() {
         setInterval(() => {
-            const skrg = new Date();
-            const listHari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-            const listBulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-            
-            const txtDate = `📅 ${listHari[skrg.getDay()]}, ${String(skrg.getDate()).padStart(2, '0')} ${listBulan[skrg.getMonth()]} ${skrg.getFullYear()}`;
-            const txtClock = `⏱️ ${String(skrg.getHours()).padStart(2, '0')}:${String(skrg.getMinutes()).padStart(2, '0')}:${String(skrg.getSeconds()).padStart(2, '0')} WIB`;
-            
-            const elDate = document.getElementById('header-live-date');
-            const elClock = document.getElementById('header-live-clock');
-            
-            if(elDate) elDate.innerText = txtDate;
-            if(elClock) elClock.innerText = txtClock;
+            const now = new Date();
+            const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+            const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+            const dateStr = `📅 ${days[now.getDay()]}, ${String(now.getDate()).padStart(2,'0')} ${months[now.getMonth()]} ${now.getFullYear()}`;
+            const timeStr = `⏱️ ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')} WIB`;
+            const dateEl = document.getElementById('header-live-date');
+            const timeEl = document.getElementById('header-live-clock');
+            if (dateEl) dateEl.innerText = dateStr;
+            if (timeEl) timeEl.innerText = timeStr;
         }, 1000);
     }
-    document.addEventListener("DOMContentLoaded", startLiveClock);
+    document.addEventListener('DOMContentLoaded', startLiveClock);
   </script>
   @stack('scripts')
 </body>
-</html>
+</html> 

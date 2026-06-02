@@ -6,20 +6,42 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Spatie\Permission\Traits\HasRoles; // <-- 1. IMPORT TRAIT SPATIE DI SINI
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    // <-- 2. TAMBAHKAN HasRoles DI DALAM LINE USE INI
-    use HasFactory, Notifiable, HasRoles; 
+    use HasFactory, Notifiable, HasRoles;
 
+    /**
+     * Kolom yang boleh diisi (mass assignment)
+     */
     protected $fillable = [
-        'name', 'email', 'password', 'role', 'status', 
-        'phone', 'commodity', 'land_area', 'harvest_avg', 'harvest_count'
+        // Data dasar
+        'name',
+        'email',
+        'password',
+        'role',
+        'status',
+
+        // Data dari form registrasi 3 langkah
+        'no_hp',           // Nomor HP/WA
+        'provinsi',
+        'kota',
+        'kecamatan',
+        'alamat_rumah',
+        'gps_coords',
+
+        // Kolom lama (untuk kompatibilitas jika masih digunakan)
+        'phone',
+        'commodity',
+        'land_area',
+        'harvest_avg',
+        'harvest_count',
     ];
 
     protected $hidden = [
-        'password', 'remember_token',
+        'password',
+        'remember_token',
     ];
 
     protected $casts = [
@@ -28,8 +50,7 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
 
     /**
-     * HUBUNGAN RIIL: Satu akun User (Petani) memiliki satu Data Lahan spesifik
-     * Ini yang bertugas menarik data dari tabel 'lahans' secara otomatis saat login
+     * Relasi ke data lahan (jika ada)
      */
     public function lahan()
     {
