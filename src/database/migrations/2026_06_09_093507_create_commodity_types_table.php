@@ -8,41 +8,19 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::dropIfExists('commodity_soil_type');
-
-        Schema::create('commodity_soil_type', function (Blueprint $table) {
+        Schema::create('commodity_types', function (Blueprint $table) {
             $table->id();
-
-            $table->foreignId('soil_type_id')
-                ->constrained('soil_types')
+            $table->foreignId('commodity_id')
+                ->constrained('commodities')
                 ->cascadeOnDelete();
-
-            $table->foreignId('commodity_type_id')
-                ->constrained('commodity_types')
-                ->cascadeOnDelete();
-
+            $table->string('name');
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
-
-            $table->unique(['soil_type_id', 'commodity_type_id']);
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('commodity_soil_type');
-
-        Schema::create('commodity_soil_type', function (Blueprint $table) {
-            $table->id();
-
-            $table->foreignId('commodity_id')
-                ->constrained('commodities')
-                ->cascadeOnDelete();
-
-            $table->foreignId('soil_type_id')
-                ->constrained('soil_types')
-                ->cascadeOnDelete();
-
-            $table->timestamps();
-        });
+        Schema::dropIfExists('commodity_types');
     }
 };
