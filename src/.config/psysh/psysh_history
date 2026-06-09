@@ -1,0 +1,2 @@
+\Schema::hasColumn('pests', 'weather_conditions');
+\Schema::hasColumn('pests', 'weather_conditions');
