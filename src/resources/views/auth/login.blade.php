@@ -2,388 +2,613 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Masuk - Tera Tani</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Masuk | TANIVERS — Ekosistem Digital Pertanian</title>
+    
+    <!-- Google Fonts: Modern & Premium -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Playfair+Display:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        /* Custom design tokens & refinements */
+        :root {
+            --brand-deep: #0A2F22;      /* hijau premium gelap (panel kiri) */
+            --brand-green: #0F6E3F;     /* hijau aksen segar untuk tombol & link */
+            --brand-green-light: #E8F3EC;
+            --brand-gold: #D4AF37;       /* aksen emas subtle (opsional) */
+            --gray-bg-input: #F9FAFB;
+            --gray-border: #E5E9F0;
+            --text-primary: #111827;
+            --text-secondary: #4B5563;
+            --shadow-premium: 0 25px 45px -12px rgba(0, 0, 0, 0.15), 0 2px 5px -2px rgba(0, 0, 0, 0.02);
+            --shadow-input-focus: 0 0 0 4px rgba(15, 110, 63, 0.12);
+        }
+
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: #f1f5f9;
+            font-family: 'Inter', sans-serif;
+            color: var(--text-primary);
+            background: #FFFFFF;
+            overflow-x: hidden;
+        }
+
+        /* custom font untuk heading serif */
+        .font-serif-display {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* layout modern */
+        .split-layout {
+            display: flex;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 24px;
-        }
-        body::before, body::after {
-            content: '';
-            position: fixed;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 0;
-        }
-        body::before {
-            width: 340px; height: 340px;
-            background: #fb923c;
-            opacity: 0.12;
-            top: -80px; right: -80px;
-        }
-        body::after {
-            width: 260px; height: 260px;
-            background: #f97316;
-            opacity: 0.08;
-            bottom: -60px; left: -60px;
-        }
-        .card {
-            position: relative;
-            z-index: 1;
-            background: #fff;
-            border-radius: 28px;
-            box-shadow: 0 8px 48px rgba(0,0,0,0.10), 0 2px 12px rgba(0,0,0,0.06);
-            display: flex;
-            flex-direction: row;
             width: 100%;
-            max-width: 920px;
-            min-height: 560px;
-            overflow: hidden;
         }
-        .form-side {
+
+        /* ----- PANEL KIRI (PREMIUM, BERNAS, AGRI-TECH) ----- */
+        .panel-left {
             flex: 1;
-            padding: 52px 48px;
+            background: linear-gradient(135deg, #0B2F21 0%, #052116 100%);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(0px);
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: space-between;
+            padding: 48px 48px 40px 48px;
         }
-        .logo-row {
+
+        /* dekorasi elemen abstrak modern */
+        .panel-left::before {
+            content: "";
+            position: absolute;
+            top: -20%;
+            right: -15%;
+            width: 380px;
+            height: 380px;
+            background: radial-gradient(circle, rgba(90, 160, 110, 0.18) 0%, rgba(15, 110, 63, 0) 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .panel-left::after {
+            content: "";
+            position: absolute;
+            bottom: -10%;
+            left: -10%;
+            width: 320px;
+            height: 320px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.08) 0%, rgba(0,0,0,0) 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .leaf-pattern {
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='52' height='52' viewBox='0 0 52 52' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M26 2 L30 12 L40 12 L32 20 L36 30 L26 24 L16 30 L20 20 L12 12 L22 12 L26 2Z' fill='rgba(255,255,255,0.02)' stroke='rgba(255,255,255,0.02)' stroke-width='0.5'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            background-size: 40px;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .brand-header {
+            position: relative;
+            z-index: 2;
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 36px;
+            gap: 12px;
         }
+
         .logo-icon {
-            width: 36px; height: 36px;
-            background: #f97316;
-            border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
+            background: rgba(255,255,255,0.12);
+            backdrop-filter: blur(2px);
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
-        .logo-icon svg { width: 20px; height: 20px; }
-        .logo-name {
-            font-size: 17px;
-            font-weight: 800;
-            color: #1e293b;
-            letter-spacing: -0.3px;
+
+        .brand-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.65rem;
+            font-weight: 700;
+            letter-spacing: -0.2px;
+            background: linear-gradient(135deg, #FFFFFF 70%, #C8E6D9);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
         }
-        h1 {
-            font-size: 40px;
-            font-weight: 900;
-            color: #0f172a;
-            letter-spacing: -1.5px;
-            line-height: 1.05;
-            margin-bottom: 8px;
-        }
-        .subtitle {
-            font-size: 14px;
-            color: #94a3b8;
-            margin-bottom: 32px;
-        }
-        .input-group {
+
+        .hero-content {
             position: relative;
-            margin-bottom: 14px;
+            z-index: 2;
+            max-width: 480px;
+            margin: 0;
+            transform: translateY(-2rem);
         }
+
+        .hero-title {
+            font-size: 3.2rem;
+            line-height: 1.2;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: linear-gradient(to right, #FFFFFF, #E0F0E8);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 1.25rem;
+        }
+
+        .hero-subtitle {
+            font-size: 0.95rem;
+            line-height: 1.55;
+            color: rgba(220, 240, 230, 0.85);
+            font-weight: 400;
+            border-left: 2px solid rgba(212, 175, 55, 0.6);
+            padding-left: 1rem;
+        }
+
+        .footer-text {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.4);
+            letter-spacing: 0.3px;
+            z-index: 2;
+        }
+
+        /* ----- PANEL KANAN (FORM PREMIUM) ----- */
+        .panel-right {
+            flex: 1;
+            background: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1.5rem;
+        }
+
+        .form-card {
+            width: 100%;
+            max-width: 480px;
+            background: #FFFFFF;
+            border-radius: 2rem;
+            padding: 0.5rem 0 1rem 0;
+        }
+
+        .form-title {
+            font-size: 2.25rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #0A2F22, #0F6E3F);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-subtitle {
+            font-size: 0.9rem;
+            color: #6B7280;
+            margin-bottom: 2rem;
+            font-weight: 400;
+            border-left: 2px solid #0F6E3F;
+            padding-left: 0.75rem;
+        }
+
+        /* Input groups modern */
+        .input-group {
+            margin-bottom: 1.75rem;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #0F6E3F;
+            margin-bottom: 0.6rem;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
         .input-icon {
             position: absolute;
-            left: 16px; top: 50%;
+            left: 16px;
+            top: 50%;
             transform: translateY(-50%);
-            color: #cbd5e1;
+            color: #9CA3AF;
             pointer-events: none;
-            display: flex;
+            transition: color 0.2s;
+            z-index: 1;
         }
-        .input-icon svg { width: 18px; height: 18px; }
-        .input-group input {
+
+        .input-field {
             width: 100%;
-            padding: 14px 48px;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 14px;
-            font-family: inherit;
-            font-size: 14px;
-            color: #1e293b;
-            background: #f8fafc;
+            padding: 14px 16px 14px 46px;
+            background-color: #F9FAFB;
+            border: 1.5px solid #EFF3F8;
+            border-radius: 18px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #111827;
             outline: none;
-            transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+            transition: all 0.2s ease;
+            font-family: 'Inter', sans-serif;
         }
-        .input-group input::placeholder { color: #cbd5e1; }
-        .input-group input:focus {
-            border-color: #f97316;
-            background: #fff;
-            box-shadow: 0 0 0 4px rgba(249,115,22,0.10);
+
+        .input-field:focus {
+            background-color: #FFFFFF;
+            border-color: #0F6E3F;
+            box-shadow: var(--shadow-input-focus);
         }
-        .pw-eye {
+
+        .input-field::placeholder {
+            color: #B9C1CC;
+            font-weight: 400;
+            font-size: 0.9rem;
+        }
+
+        /* tombol toggle password */
+        .btn-toggle-pw {
             position: absolute;
-            right: 16px; top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-            color: #cbd5e1;
-            background: none;
+            right: 16px;
+            background: transparent;
             border: none;
-            padding: 0;
+            color: #9CA3AF;
+            cursor: pointer;
             display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
             transition: color 0.2s;
         }
-        .pw-eye:hover { color: #f97316; }
-        .pw-eye svg { width: 18px; height: 18px; }
-        .extras {
+
+        .btn-toggle-pw:hover {
+            color: #0F6E3F;
+        }
+
+        /* form options */
+        .form-options {
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            margin-bottom: 22px;
-            margin-top: 4px;
-        }
-        .remember { display: flex; align-items: center; gap: 8px; cursor: pointer; }
-        .remember input[type=checkbox] { width: 16px; height: 16px; accent-color: #f97316; cursor: pointer; }
-        .remember span { font-size: 13px; color: #64748b; font-weight: 500; }
-        .forgot { font-size: 13px; color: #f97316; font-weight: 600; text-decoration: none; }
-        .forgot:hover { color: #ea580c; }
-        .btn-login {
-            width: 100%;
-            padding: 15px;
-            border-radius: 14px;
-            border: none;
-            background: #0f172a;
-            color: #fff;
-            font-family: inherit;
-            font-size: 13px;
-            font-weight: 800;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: background 0.35s ease, transform 0.15s ease, box-shadow 0.3s ease;
-            margin-bottom: 20px;
-        }
-        .btn-login:hover {
-            background: #f97316;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 28px rgba(249,115,22,0.30);
-        }
-        .btn-login:active { transform: translateY(0); }
-        .divider { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
-        .divider-line { flex: 1; height: 1px; background: #e2e8f0; }
-        .divider-txt { font-size: 12px; color: #94a3b8; font-weight: 600; white-space: nowrap; }
-        .social-row { display: flex; gap: 12px; margin-bottom: 26px; }
-        .btn-social {
-            flex: 1;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            padding: 11px 14px;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 12px;
-            background: #fff;
-            font-family: inherit;
-            font-size: 12.5px;
-            font-weight: 600;
-            color: #475569;
-            cursor: pointer;
-            text-decoration: none;
-            transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
-        }
-        .btn-social:hover {
-            border-color: #f97316;
-            background: #fff7ed;
-            box-shadow: 0 2px 8px rgba(249,115,22,0.10);
-        }
-        .btn-social svg { width: 18px; height: 18px; flex-shrink: 0; }
-        .register-link { font-size: 13px; color: #94a3b8; text-align: center; }
-        .register-link a { color: #f97316; font-weight: 700; text-decoration: none; }
-        .register-link a:hover { color: #ea580c; }
-
-        /* RIGHT panel */
-        .mascot-side {
-            width: 400px;
-            flex-shrink: 0;
-            background: linear-gradient(145deg, #ffad5c 0%, #f97316 55%, #ea580c 100%);
-            border-radius: 22px;
-            margin: 14px 14px 14px 0;
-            position: relative;
-            display: flex;
-            flex-direction: column;
             align-items: center;
-            justify-content: flex-end;
-            overflow: hidden;
-            padding-bottom: 36px;
+            margin: 1.2rem 0 2rem 0;
         }
-        .mascot-side::before {
-            content: '';
-            position: absolute;
-            width: 320px; height: 320px;
-            border: 45px solid rgba(255,255,255,0.08);
-            border-radius: 50%;
-            top: -90px; right: -90px;
+
+        .remember-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
         }
-        .mascot-side::after {
-            content: '';
-            position: absolute;
-            width: 200px; height: 200px;
-            border: 28px solid rgba(255,255,255,0.06);
-            border-radius: 50%;
-            bottom: -50px; left: -50px;
+
+        .remember-wrap input {
+            width: 18px;
+            height: 18px;
+            accent-color: #0F6E3F;
+            border-radius: 4px;
+            cursor: pointer;
         }
-        .mascot-glow {
-            position: absolute;
-            width: 240px; height: 300px;
-            background: rgba(255,255,255,0.13);
-            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -60%);
+
+        .remember-wrap span {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #4B5563;
         }
-        .mascot-img {
-            position: relative;
-            z-index: 2;
-            width: 88%;
-            max-width: 320px;
-            filter: drop-shadow(0 20px 40px rgba(0,0,0,0.22));
-            transition: transform 0.5s cubic-bezier(0.34,1.4,0.64,1);
+
+        .forgot-link {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #0F6E3F;
+            text-decoration: none;
+            transition: all 0.2s;
+            border-bottom: 1px dotted transparent;
         }
-        .mascot-side:hover .mascot-img { transform: translateY(-10px) scale(1.03); }
-        .mascot-label {
-            position: relative;
-            z-index: 2;
+
+        .forgot-link:hover {
+            border-bottom-color: #0F6E3F;
+        }
+
+        /* tombol utama premium */
+        .btn-submit {
+            width: 100%;
+            padding: 14px 18px;
+            background: #0F6E3F;
+            color: white;
+            border: none;
+            border-radius: 40px;
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 10px rgba(15, 110, 63, 0.25);
+        }
+
+        .btn-submit:hover {
+            background: #095A33;
+            transform: scale(1.01) translateY(-2px);
+            box-shadow: 0 12px 22px -8px rgba(15, 110, 63, 0.4);
+        }
+
+        .btn-submit:active {
+            transform: scale(0.98);
+        }
+
+        .switch-page {
             text-align: center;
-            margin-top: 14px;
-            padding: 0 20px;
+            margin-top: 2rem;
+            font-size: 0.85rem;
+            color: #6C757D;
+            font-weight: 500;
         }
-        .mascot-label h2 { font-size: 21px; font-weight: 800; color: #fff; letter-spacing: -0.4px; margin-bottom: 6px; }
-        .mascot-label p { font-size: 13px; color: rgba(255,255,255,0.78); line-height: 1.5; }
 
-        .alert-error, .alert-success {
-            border-radius: 12px; padding: 12px 16px; font-size: 13px; margin-bottom: 16px;
+        .switch-page a {
+            color: #0F6E3F;
+            font-weight: 700;
+            text-decoration: none;
+            margin-left: 4px;
+            transition: all 0.2s;
         }
-        .alert-error { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
-        .alert-success { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
 
-        @media (max-width: 768px) {
-            .card { flex-direction: column-reverse; max-width: 440px; min-height: unset; }
-            .mascot-side { width: 100%; height: 220px; margin: 0; border-radius: 22px 22px 0 0; padding-bottom: 20px; }
-            .form-side { padding: 32px 24px 28px; }
-            .mascot-img { max-width: 150px; }
-            h1 { font-size: 32px; }
-            .social-row { flex-direction: column; }
+        .switch-page a:hover {
+            text-decoration: underline;
+            color: #0A4D2C;
+        }
+
+        /* Alert styling premium */
+        .alert {
+            padding: 0.9rem 1.2rem;
+            border-radius: 1.25rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            backdrop-filter: blur(2px);
+        }
+        .alert-error {
+            background: #FEF3F2;
+            color: #B91C1C;
+            border-left: 4px solid #DC2626;
+        }
+        .alert-success {
+            background: #ECFDF5;
+            color: #065F46;
+            border-left: 4px solid #10B981;
+        }
+
+        /* Responsive touch */
+        @media (max-width: 920px) {
+            .split-layout {
+                flex-direction: column;
+            }
+            .panel-left {
+                min-height: 44vh;
+                padding: 2rem 1.8rem;
+            }
+            .hero-title {
+                font-size: 2.4rem;
+            }
+            .hero-content {
+                transform: translateY(0);
+                margin-top: 1.2rem;
+            }
+            .panel-right {
+                padding: 2rem 1.5rem;
+            }
+            .form-card {
+                padding: 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+            .form-title {
+                font-size: 1.9rem;
+            }
+        }
+
+        /* smooth fade-in */
+        .fade-up {
+            animation: fadeUp 0.5s ease forwards;
+        }
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
 </head>
 <body>
 
-<div class="card">
-
-    <!-- LEFT: Form -->
-    <div class="form-side">
-
-        <div class="logo-row">
+<div class="split-layout">
+    <!-- Panel Kiri: Identitas Merek & Hero Premium -->
+    <div class="panel-left">
+        <div class="leaf-pattern"></div>
+        <div class="brand-header">
             <div class="logo-icon">
-                <svg fill="none" stroke="white" stroke-width="2.2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3C7 3 3 7.5 3 13c0 4 2.5 7.5 6 9l3-5 3 5c3.5-1.5 6-5 6-9 0-5.5-4-10-9-10z"/>
-                </svg>
+                <i data-lucide="sprout" width="20" height="20" stroke="white" stroke-width="1.8"></i>
             </div>
-            <span class="logo-name">Tera Tani</span>
+            <div class="brand-name">TANIVERS</div>
         </div>
 
-        <h1>Welcome</h1>
-        <p class="subtitle">Kami senang melihat Anda kembali bersama kami.</p>
-
-        @if ($errors->any())
-        <div class="alert-error">
-            <ul style="list-style:disc;padding-left:16px;">
-                @foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach
-            </ul>
+        <div class="hero-content fade-up">
+            <h1 class="hero-title">Ekosistem<br>Pertanian Digital</h1>
+            <p class="hero-subtitle">
+                Akses dashboard pengelolaan terpadu, pantau perkembangan lahan, dan kendalikan operasional agribisnis Anda secara real-time dengan kecerdasan data.
+            </p>
         </div>
-        @endif
-        @if (session('status'))
-        <div class="alert-success">{{ session('status') }}</div>
-        @endif
 
-        <form action="{{ route('login') }}" method="POST">
-            @csrf
-            <div class="input-group">
-                <span class="input-icon">
-                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                    </svg>
-                </span>
-                <input type="email" name="email" value="{{ old('email') }}" placeholder="Alamat Email" required autofocus>
+        <div class="footer-text">
+            <span>© 2025 TANIVERS — Ekosistem Digital Pertanian</span>
+        </div>
+    </div>
+
+    <!-- Panel Kanan: Form Login Modern -->
+    <div class="panel-right">
+        <div class="form-card fade-up">
+            <h2 class="form-title">Masuk Akun</h2>
+            <p class="form-subtitle">Selamat datang kembali. Kelola pertanian masa kini.</p>
+
+            <!-- Notifikasi error & session -->
+            @if ($errors->any())
+            <div class="alert alert-error">
+                <ul style="list-style: disc; padding-left: 1.2rem; margin: 0;">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
             </div>
-            <div class="input-group">
-                <span class="input-icon">
-                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                    </svg>
-                </span>
-                <input type="password" name="password" id="pw-field" placeholder="Kata Sandi" required>
-                <button type="button" class="pw-eye" onclick="togglePw()" aria-label="Tampilkan kata sandi">
-                    <svg id="eye-on" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                    </svg>
-                    <svg id="eye-off" style="display:none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.477 0-8.268-2.943-9.542-7a9.97 9.97 0 012.57-4.32M9.88 9.88A3 3 0 0114.12 14.12M3 3l18 18"/>
-                    </svg>
+            @endif
+
+            @if (session('status'))
+            <div class="alert alert-success">
+                {{ session('status') }}
+            </div>
+            @endif
+
+            <form action="{{ route('login') }}" method="POST" novalidate>
+                @csrf
+
+                <!-- Input Email dengan Ikon Lucide -->
+                <div class="input-group">
+                    <label class="input-label" for="email">Alamat Email</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">
+                            <i data-lucide="mail" width="18" height="18"></i>
+                        </span>
+                        <input type="email" name="email" id="email" class="input-field" 
+                               value="{{ old('email') }}" placeholder="nama@perusahaan.com" required autofocus>
+                    </div>
+                </div>
+
+                <!-- Input Password dengan Ikon Lucide & Toggle -->
+                <div class="input-group">
+                    <label class="input-label" for="password">Kata Sandi</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">
+                            <i data-lucide="lock" width="18" height="18"></i>
+                        </span>
+                        <input type="password" name="password" id="password" class="input-field" 
+                               placeholder="Masukkan kata sandi" required>
+                        <button type="button" class="btn-toggle-pw" id="togglePasswordBtn" aria-label="Tampilkan sandi">
+                            <i data-lucide="eye" id="icon-eye" width="18" height="18"></i>
+                            <i data-lucide="eye-off" id="icon-eye-off" width="18" height="18" style="display: none;"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Opsi Lanjutan -->
+                <div class="form-options">
+                    <label class="remember-wrap">
+                        <input type="checkbox" name="remember" id="remember">
+                        <span>Ingat perangkat ini</span>
+                    </label>
+                    @if (Route::has('password.request'))
+                        <a href="{{ route('password.request') }}" class="forgot-link">Lupa sandi?</a>
+                    @endif
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    <i data-lucide="log-in" width="18" height="18"></i>
+                    <span>Lanjutkan ke Dashboard</span>
                 </button>
+            </form>
+
+            <div class="switch-page">
+                Belum tergabung dalam ekosistem?
+                <a href="{{ route('register') }}">Buat akun baru →</a>
             </div>
-            <div class="extras">
-                <label class="remember">
-                    <input type="checkbox" name="remember">
-                    <span>Ingat saya</span>
-                </label>
-                @if (Route::has('password.request'))
-                <a href="{{ route('password.request') }}" class="forgot">Lupa kata sandi?</a>
-                @endif
+
+            <!-- dekorasi garis pemisah subtle -->
+            <div class="mt-8 text-center text-[11px] text-gray-400 flex items-center justify-center gap-2">
+                <span class="h-px w-6 bg-gray-200 inline-block"></span>
+                platform terpercaya agri-tech
+                <span class="h-px w-6 bg-gray-200 inline-block"></span>
             </div>
-            <button type="submit" class="btn-login">Masuk</button>
-        </form>
-
-        <div class="divider">
-            <div class="divider-line"></div>
-            <span class="divider-txt">Login dengan lainnya</span>
-            <div class="divider-line"></div>
-        </div>
-
-        <div class="social-row">
-            <a href="#" class="btn-social">
-                <svg viewBox="0 0 48 48"><path d="M44.5 20H24v8.5h11.7C34.2 33.6 29.6 37 24 37c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.1 0 5.9 1.1 8.1 2.9l6.2-6.2C34.6 5.1 29.6 3 24 3 12.4 3 3 12.4 3 24s9.4 21 21 21c10.9 0 20-7.9 20-21 0-1.4-.1-2.7-.5-4z" fill="#FFC107"/><path d="M6.3 14.7l7 5.1C15 16.1 19.2 13 24 13c3.1 0 5.9 1.1 8.1 2.9l6.2-6.2C34.6 5.1 29.6 3 24 3 16.1 3 9.3 7.9 6.3 14.7z" fill="#FF3D00"/><path d="M24 45c5.5 0 10.4-1.9 14.2-5.1l-6.6-5.5C29.6 36 26.9 37 24 37c-5.6 0-10.3-3.5-11.8-8.4l-7 5.4C8.2 40.6 15.5 45 24 45z" fill="#4CAF50"/><path d="M44.5 20H24v8.5h11.7c-.6 2-1.9 3.8-3.6 5.1l6.6 5.5C43.1 35.6 45 30.2 45 24c0-1.4-.1-2.7-.5-4z" fill="#1976D2"/></svg>
-                Login dengan Google
-            </a>
-            <a href="#" class="btn-social">
-                <svg viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073C24 5.404 18.627 0 12 0S0 5.404 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.532-4.697 1.313 0 2.686.235 2.686.235v2.97h-1.513c-1.491 0-1.956.93-1.956 1.886v2.254h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
-                Login dengan Facebook
-            </a>
-        </div>
-
-        <p class="register-link">
-            Belum punya akun? <a href="{{ route('register') }}">Daftar gratis</a>
-        </p>
-    </div>
-
-    <!-- RIGHT: Maskot -->
-    <div class="mascot-side">
-        <div class="mascot-glow"></div>
-        <img src="{{ asset('images/maskot.png') }}" alt="Maskot Tera Tani" class="mascot-img">
-        <div class="mascot-label">
-            <h2>Tera Tani Vision</h2>
-            <p>Pertanian modern yang lebih cerdas dan berkelanjutan.</p>
         </div>
     </div>
-
 </div>
 
 <script>
-function togglePw() {
-    const f = document.getElementById('pw-field');
-    const on = document.getElementById('eye-on');
-    const off = document.getElementById('eye-off');
-    if (f.type === 'password') {
-        f.type = 'text'; on.style.display = 'none'; off.style.display = 'block';
-    } else {
-        f.type = 'password'; on.style.display = 'block'; off.style.display = 'none';
-    }
-}
+    // Inisialisasi semua ikon Lucide
+    document.addEventListener('DOMContentLoaded', function() {
+        lucide.createIcons();
+        
+        // Setup toggle password dengan state yang benar
+        const toggleBtn = document.getElementById('togglePasswordBtn');
+        const passwordField = document.getElementById('password');
+        const eyeIcon = document.getElementById('icon-eye');
+        const eyeOffIcon = document.getElementById('icon-eye-off');
+        
+        if (toggleBtn && passwordField) {
+            toggleBtn.addEventListener('click', function() {
+                const isPassword = passwordField.type === 'password';
+                if (isPassword) {
+                    passwordField.type = 'text';
+                    if (eyeIcon) eyeIcon.style.display = 'none';
+                    if (eyeOffIcon) eyeOffIcon.style.display = 'block';
+                } else {
+                    passwordField.type = 'password';
+                    if (eyeIcon) eyeIcon.style.display = 'block';
+                    if (eyeOffIcon) eyeOffIcon.style.display = 'none';
+                }
+            });
+        }
+
+        // Optional: animasi tambahan pada input focus (memperkuat user experience)
+        const inputs = document.querySelectorAll('.input-field');
+        inputs.forEach(input => {
+            input.addEventListener('focus', (e) => {
+                const parentWrapper = input.closest('.input-wrapper');
+                if (parentWrapper) {
+                    const iconSpan = parentWrapper.querySelector('.input-icon');
+                    if (iconSpan) iconSpan.style.color = '#0F6E3F';
+                }
+            });
+            input.addEventListener('blur', (e) => {
+                const parentWrapper = input.closest('.input-wrapper');
+                if (parentWrapper) {
+                    const iconSpan = parentWrapper.querySelector('.input-icon');
+                    if (iconSpan && !input.value) iconSpan.style.color = '#9CA3AF';
+                    else if (iconSpan) iconSpan.style.color = '#6B7280';
+                }
+            });
+        });
+    });
+    
+    // Fallback jika lucide belum load sempurna (re-run)
+    window.addEventListener('load', function() {
+        if (typeof lucide !== 'undefined' && lucide.createIcons) {
+            lucide.createIcons();
+        }
+        // memastikan icon toggle state awal benar
+        const eyeIcon = document.getElementById('icon-eye');
+        const eyeOffIcon = document.getElementById('icon-eye-off');
+        if (eyeIcon && eyeOffIcon && document.getElementById('password')?.type === 'password') {
+            eyeIcon.style.display = 'block';
+            eyeOffIcon.style.display = 'none';
+        }
+    });
 </script>
 </body>
 </html>
