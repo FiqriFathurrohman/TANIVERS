@@ -1,12 +1,16 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Livewire;
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\WilayahController;
 use App\Http\Controllers\LahanController;
+use App\Http\Controllers\PreProductionController;
+
+use App\Models\Lahan;
 
 /*
 |--------------------------------------------------------------------------
@@ -66,11 +70,11 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 |--------------------------------------------------------------------------
 */
 
-use App\Models\Lahan;
-use Illuminate\Support\Facades\Auth;
-
 Route::get('/dashboard', function () {
-    // Ambil semua lahan milik user untuk filter
+    if (! Auth::check()) {
+        return redirect()->route('login');
+    }
+
     $lahans = Lahan::where('user_id', Auth::id())
         ->latest()
         ->get();
@@ -84,8 +88,29 @@ Route::get('/dashboard', function () {
 |--------------------------------------------------------------------------
 */
 
-Route::get('/lahan/create', [LahanController::class, 'create'])->name('lahan.create');
-Route::post('/lahan/store', [LahanController::class, 'store'])->name('lahan.store');
+Route::get('/lahan/create', [LahanController::class, 'create'])
+    ->name('lahan.create');
+
+Route::post('/lahan/store', [LahanController::class, 'store'])
+    ->name('lahan.store');
+
+/*
+|--------------------------------------------------------------------------
+| Pre Production & Perancangan Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/pre-production/create', [PreProductionController::class, 'create'])
+    ->name('pre-production.create');
+
+Route::post('/pre-production/store', [PreProductionController::class, 'store'])
+    ->name('pre-production.store');
+
+Route::get('/pre-production/commodity-types/{commodityId}', [PreProductionController::class, 'commodityTypes'])
+    ->name('pre-production.commodity-types');
+
+Route::get('/pre-production/planting-guide/{commodityTypeId}', [PreProductionController::class, 'plantingGuide'])
+    ->name('pre-production.planting-guide');
 
 /*
 |--------------------------------------------------------------------------
@@ -93,6 +118,11 @@ Route::post('/lahan/store', [LahanController::class, 'store'])->name('lahan.stor
 |--------------------------------------------------------------------------
 */
 
-Route::get('/wilayah/provinces', [WilayahController::class, 'provinces'])->name('wilayah.provinces');
-Route::get('/wilayah/cities/{provinceId}', [WilayahController::class, 'cities'])->name('wilayah.cities');
-Route::get('/wilayah/districts/{cityId}', [WilayahController::class, 'districts'])->name('wilayah.districts');
+Route::get('/wilayah/provinces', [WilayahController::class, 'provinces'])
+    ->name('wilayah.provinces');
+
+Route::get('/wilayah/cities/{provinceId}', [WilayahController::class, 'cities'])
+    ->name('wilayah.cities');
+
+Route::get('/wilayah/districts/{cityId}', [WilayahController::class, 'districts'])
+    ->name('wilayah.districts');

@@ -3,14 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Lahan extends Model
 {
     protected $fillable = [
         'user_id',
-        'commodity_id',
+        'soil_type_id',
         'nama_lahan',
-        'komoditas',
+        'jenis_tanah',
         'koordinat_lahan',
         'luas_meter_persegi',
         'weather_latitude',
@@ -19,5 +20,18 @@ class Lahan extends Model
 
     protected $casts = [
         'koordinat_lahan' => 'array',
+        'luas_meter_persegi' => 'decimal:2',
+        'weather_latitude' => 'decimal:7',
+        'weather_longitude' => 'decimal:7',
     ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function soilType(): BelongsTo
+    {
+        return $this->belongsTo(SoilType::class);
+    }
 }

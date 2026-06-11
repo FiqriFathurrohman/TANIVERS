@@ -380,3 +380,65 @@ php artisan view:clear
 php artisan filament:clear-cached-components
 php artisan tinker
 exit
+composer install
+cp .env.example .env
+php artisan key:generate
+nano .env
+exit
+php artisan key:generate
+php artisan optimize:clear
+php artisan migrate
+php artisan db:seed
+php artisan db:seed
+php artisan optimize:clear
+php artisan optimize:clear
+php artisan config:clear
+php artisan optimize:clear
+php artisan optimize:clear
+exit
+php artisan make:model PlantingGuide -m
+php artisan make:model PlantingGuideTask -m
+mkdir -p app/Filament/Admin/Resources/PlantingGuideResource/Pages
+nano app/Filament/Admin/Resources/PlantingGuideResource.php
+mkdir -p app/Filament/Admin/Resources/PlantingGuideResource/Pages
+php artisan migrate
+php artisan optimize:clear
+php artisan migrate:fresh --seed
+php artisan optimize:clear
+php artisan make:model PlantingGuidePhase
+php artisan migrate:fresh --seed
+php artisan optimize:clear
+php artisan optimize:clear
+exit
+php artisan migrate
+php artisan optimize:clear
+php artisan make:model PreProductionPlan -m
+php artisan make:controller PreProductionController
+php artisan migrate
+php artisan optimize:clear
+php artisan route:list | grep pre-production
+php artisan optimize:clear
+php artisan route:clear
+php artisan config:clear
+php artisan view:clear
+php artisan route:list
+php artisan optimize:clear
+php artisan optimize:clear
+php artisan optimize:clear
+php artisan optimize:clear
+src/database/migrations/xxxx_xx_xx_xxxxxx_add_soil_type_columns_to_lahans_table.php
+docker compose exec taniverse_app php artisan make:migration add_soil_type_columns_to_lahans_table --table=lahans
+php artisan make:migration add_soil_type_columns_to_lahans_table --table=lahans
+php artisan migrate
+php artisan optimize:clear
+php artisan optimize:clear
+exit
+php artisan make:migration fix_unique_active_planting_guides_table --table=planting_guides
+php artisan migrate
+php artisan optimize:clear
+php artisan migrate
+php artisan optimize:clear
+php artisan migrate
+php artisan 
+php artisan migrate:fresh --seed
+exit

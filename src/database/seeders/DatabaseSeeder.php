@@ -116,20 +116,8 @@ class DatabaseSeeder extends Seeder
         |--------------------------------------------------------------------------
         */
 
-        $initialCommodities = [
-            ['name' => 'Padi Ciherang', 'is_active' => true],
-            ['name' => 'Padi Pandan Wangi', 'is_active' => true],
-            ['name' => 'Jagung Hibrida', 'is_active' => true],
-            ['name' => 'Cabai Rawit Merah', 'is_active' => true],
-            ['name' => 'Bawang Merah Lokal', 'is_active' => true],
-            ['name' => 'Tomat Rampai', 'is_active' => true],
-        ];
+        
 
-        foreach ($initialCommodities as $commodity) {
-            Commodity::updateOrCreate(
-                ['name' => $commodity['name']],
-                ['is_active' => $commodity['is_active']]
-            );
-        }
+        
     }
 }
