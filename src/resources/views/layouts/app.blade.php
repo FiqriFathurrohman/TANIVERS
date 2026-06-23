@@ -109,6 +109,35 @@
                     <span>Pra Production</span>
                 </a>
 
+                <a href="{{ route('pelaksanaan.index') }}" 
+                    class="flex items-center gap-3.5 px-4 py-3.5 rounded-xl transition-all text-sm font-medium
+                    {{ Route::is('pelaksanaan.*') 
+                            ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-md border border-emerald-400/30' 
+                            : 'text-emerald-100/70 hover:bg-emerald-800/40 hover:text-white' }}">
+                        <i data-lucide="list-checks" class="w-5 h-5 shrink-0"></i>
+                        <span>Pelaksanaan</span>
+                    </a>
+
+                <a href="{{ route('riwayat-laporan.index') }}" 
+                    class="flex items-center gap-3.5 px-4 py-3.5 rounded-xl transition-all text-sm font-medium
+                    {{ Route::is('riwayat-laporan.*') 
+                         ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-md border border-emerald-400/30' 
+                         : 'text-emerald-100/70 hover:bg-emerald-800/40 hover:text-white' }}">
+                     <i data-lucide="history" class="w-5 h-5 shrink-0"></i>
+                     <span>Riwayat Laporan</span>
+                 </a>
+
+                 <a href="{{ route('laporan-keuangan.index') }}" 
+                    class="flex items-center gap-3.5 px-4 py-3.5 rounded-xl transition-all text-sm font-medium
+                    {{ Route::is('laporan-keuangan.*') 
+                            ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-md border border-emerald-400/30' 
+                            : 'text-emerald-100/70 hover:bg-emerald-800/40 hover:text-white' }}">
+                        <i data-lucide="wallet-cards" class="w-5 h-5 shrink-0"></i>
+                        <span>Laporan Keuangan</span>
+                    </a>
+
+                 
+
                 <a href="#" 
                    class="flex items-center gap-3.5 px-4 py-3.5 rounded-xl transition-all text-emerald-100/70 hover:bg-emerald-800/40 hover:text-white text-sm font-medium">
                     <i data-lucide="shopping-bag" class="w-5 h-5 shrink-0"></i>

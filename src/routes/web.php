@@ -9,6 +9,9 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\WilayahController;
 use App\Http\Controllers\LahanController;
 use App\Http\Controllers\PreProductionController;
+use App\Http\Controllers\PelaksanaanController;
+use App\Http\Controllers\RiwayatLaporanController;
+use App\Http\Controllers\LaporanKeuanganController;
 
 use App\Models\Lahan;
 
@@ -111,6 +114,46 @@ Route::get('/pre-production/commodity-types/{commodityId}', [PreProductionContro
 
 Route::get('/pre-production/planting-guide/{commodityTypeId}', [PreProductionController::class, 'plantingGuide'])
     ->name('pre-production.planting-guide');
+
+
+/*
+|--------------------------------------------------------------------------
+| Pelaksanaan Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/pelaksanaan', [PelaksanaanController::class, 'index'])
+    ->name('pelaksanaan.index');
+
+Route::post('/pelaksanaan/update-day', [PelaksanaanController::class, 'updateDay'])
+    ->name('pelaksanaan.update-day');
+
+Route::post('/pelaksanaan/checklist', [PelaksanaanController::class, 'updateChecklist'])
+    ->name('pelaksanaan.checklist');
+
+Route::post('/pelaksanaan/hama', [PelaksanaanController::class, 'storePestReport'])
+    ->name('pelaksanaan.hama.store');
+    
+Route::post('/pelaksanaan/pengeluaran', [PelaksanaanController::class, 'storeExpense'])
+    ->name('pelaksanaan.expense.store'); 
+    
+Route::post('/pelaksanaan/simpan-laporan', [PelaksanaanController::class, 'storeDailyReport'])
+    ->name('pelaksanaan.report.store');
+    
+/*
+|--------------------------------------------------------------------------
+| Riwayat Laporan Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/riwayat-laporan', [RiwayatLaporanController::class, 'index'])
+    ->name('riwayat-laporan.index');
+
+Route::get('/laporan-keuangan', [LaporanKeuanganController::class, 'index'])
+    ->name('laporan-keuangan.index');
+
+Route::post('/laporan-keuangan/panen', [LaporanKeuanganController::class, 'storeHarvest'])
+    ->name('laporan-keuangan.harvest.store');
 
 /*
 |--------------------------------------------------------------------------

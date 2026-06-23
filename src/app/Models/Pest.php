@@ -10,6 +10,7 @@ class Pest extends Model
         'name',
         'description',
         'weather_conditions',
+        'solution',
         'is_active',
     ];
 

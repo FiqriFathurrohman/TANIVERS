@@ -1,66 +1,3 @@
-chown -R www-data:www-data storage/*
-php artisan migrate
-php artisan db:seed --force
-php artisan shield:generate --all
-php artisan project:init
-chmod 777 -R storage/* && chmod 777 bootstrap/*
-php artisan make:model user -ms
-php artisan migrate
-php artisan migrate:fresh
-composer dump-autoload
-composer dump-autoload
-mv app/Models/user.php app/Models/User.php.bak
-mv app/Models/User.php.bak app/Models/User.php
-composer dump-autoload --no-scripts
-php artisan config:clear
-php artisan migrate:fresh --seed
-php artisan migrate:fresh
-php artisan migrate
-php artisan config:clear
-php artisan route:clear
-php artisan cache:clear
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daftar Akun - Tanivers</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
-</head>
-<body class="bg-slate-50 flex items-center justify-center min-h-screen p-4 my-6">
-    <div class="w-full max-w-2xl bg-white rounded-2xl shadow-xs border border-slate-100 p-8">
-        <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 font-bold text-xl mb-3">
-                T
-            </div>
-            <h2 class="text-2xl font-bold text-slate-800 tracking-tight">Bergabung dengan Tanivers</h2>
-            <p class="text-sm text-slate-500 mt-1">Lengkapi data diri Anda untuk menikmati seluruh layanan ekosistem kami</p>
-        </div>
-        @if ($errors->any())
-            <div class="mb-6 p-4 rounded-xl bg-red-50 text-xs text-red-600 border border-red-100">
-                <ul class="list-disc list-inside">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-        <form action="{{ route('register') }}" method="POST" class="space-y-6">
-            @csrf
-            
-            <div>
-                <h3 class="text-xs font-bold uppercase tracking-widest text-emerald-600 mb-4 pb-1 border-b border-slate-100">Informasi Pribadi</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Nama Lengkap</label>
-                        <input type="text" name="name" value="{{ old('name') }}" required 
-                            class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition text-sm text-slate-800" placeholder="Nama Anda">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">No. Handphone (WhatsApp)</label>
                         <input type="tel" name="phone" value="{{ old('phone') }}" required 
                             class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition text-sm text-slate-800" placeholder="0812xxxxxxxx">
                     </div>
@@ -441,4 +378,123 @@ php artisan optimize:clear
 php artisan migrate
 php artisan 
 php artisan migrate:fresh --seed
+exit
+exit
+exit
+cd /var/www
+pwd
+exit
+php artisan migrate
+php artisan optimize:clear
+php artisan make:model ExecutionTaskCheck -m
+php artisan make:controller PelaksanaanController
+exit
+php artisan migrate
+php artisan optimize:clear
+php artisan route:list --path=pelaksanaan
+php artisan optimize:clear
+php artisan optimize:clear
+docker compose exec taniverse_app php artisan make:model ExecutionPestReport -m
+php artisan make:model ExecutionPestReport -m
+php artisan migrate
+php artisan storage:link
+php artisan optimize:clear
+php artisan make:model Disease -m
+mkdir -p src/app/Filament/Admin/Resources/DiseaseResource/Pages
+php artisan migrate
+php artisan optimize:clear
+php artisan make:migration add_solution_to_pests_table --table=pests
+php artisan migrate
+php artisan migrate
+php optimize:clear
+php artisan optimize:clear
+php artisan optimize:clear
+php artisan optimize:clear
+php artisan optimize:clear
+php artisan optimize:clear
+php artisan make:migration create_disease_match_tables
+php artisan optimize:clear
+php artisan migrate
+php artisan optimize:clear
+php artisan optimize:clear
+php artisan migrate:status
+php artisan migrate:fresh --seed
+php artisan optimize:clear
+php artisan migrate
+php artisan optimize:clear
+php artisan tinker
+php artisan migrate:fresh --seed
+php artisan optimize:clear
+php artisan tinker
+php artisan tinker
+php artisan optimize:clear
+ls -la app/Filament/Admin/Resources/DiseaseResource.php
+ls -la app/Filament/Admin/Resources/DiseaseResource/Pages
+cd /var/www
+ls -la app/Filament/Admin/Resources/DiseaseResource.php
+ls -la app/Filament/Admin/Resources/DiseaseResource/Pages
+ls -la app/Filament/Admin/Resources/DiseaseResource/Pages
+composer dump-autoload
+php artisan optimize:clear
+php artisan route:list | grep diseases
+php artisan migrate:fresh --seed
+php artisan optimize:clear
+php artisan migrate:fresh --seed
+php artisan optimize:clear
+php artisan migrate:fresh --seed
+php artisan storage:link
+php artisan optimize:clear
+php artisan make:model ExecutionExpense -m
+php artisan make:model ExecutionExpenseItem -m
+php artisan optimize:clear
+cd /var/www
+ls database/migrations | grep execution_expense
+php artisan optimize:clear
+php artisan migrate
+php artisan optimize:clear
+exit
+cd /var/www
+composer dump-autoload
+php artisan optimize:clear
+php artisan route:list | grep data-user-pertanian
+ls -la app/Filament/Admin/Resources/UserAgricultureResource.php
+ls -la app/Filament/Admin/Resources/UserAgricultureResource/Pages
+composer dump-autoload
+php artisan optimize:clear
+ls -la app/Filament/Admin/Resources/UserAgricultureResource/Pages
+php artisan route:list | grep data-user-pertanian
+composer dump-autoload
+composer dump-autoload
+php artisan optimize:clear
+composer dump-autoload
+composer dump-autoload
+php artisan optimize:clear
+php artisan optimize:clear
+php artisan tinker
+php artisan optimize:clear
+php artisan optimize:clear
+php artisan optimize:clear
+php artisan optimize:clear
+exit
+php artisan optimize:clear
+composer dump-autoload
+php artisan optimize:clear
+mkdir -p resources/views/riwayat-laporan
+cd /var/www
+composer dump-autoload
+php artisan optimize:clear
+php artisan optimize:clear
+exit
+cd /var/www/
+composer dump-autoload
+php artisan optimize:clear
+php artisan migrate
+composer dump-autoload
+php artisan optimize:clear
+php artisan tinker
+grep -R "planting_guide_id" -n app resources routes database
+composer dump-autoload
+php artisan optimize:clear
+composer dump-autoload
+php artisan optimize:clear
 exit

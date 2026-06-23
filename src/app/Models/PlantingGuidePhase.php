@@ -10,10 +10,10 @@ class PlantingGuidePhase extends Model
 {
     protected $fillable = [
         'planting_guide_id',
-        'start_day',
-        'end_day',
         'name',
         'description',
+        'start_day',
+        'end_day',
         'sort_order',
     ];
 
@@ -25,13 +25,11 @@ class PlantingGuidePhase extends Model
 
     public function plantingGuide(): BelongsTo
     {
-        return $this->belongsTo(PlantingGuide::class);
+        return $this->belongsTo(PlantingGuide::class, 'planting_guide_id');
     }
 
     public function tasks(): HasMany
     {
-        return $this->hasMany(PlantingGuideTask::class)
-            ->orderBy('sort_order')
-            ->orderBy('start_day');
+        return $this->hasMany(PlantingGuideTask::class, 'planting_guide_phase_id');
     }
 }

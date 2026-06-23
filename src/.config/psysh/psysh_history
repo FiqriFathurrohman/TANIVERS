@@ -1,2 +1,16 @@
 \Schema::hasColumn('pests', 'weather_conditions');
 \Schema::hasColumn('pests', 'weather_conditions');
+Schema::getColumnListing('diseases');
+exit
+Schema::getColumnListing('diseases');
+exit
+Schema::hasTable('disease_commodity_type');
+Schema::hasTable('disease_soil_type');
+Schema::hasTable('disease_soil_type');
+Schema::hasTable('disease_commodity_type');
+exit
+App\Models\ExecutionTaskCheck::with('plantingGuideTask')->get();
+App\Models\ExecutionTaskCheck::count();
+exit
+Schema::getColumnListing('planting_guide_tasks');
+exit

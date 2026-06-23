@@ -61,6 +61,12 @@ class PestResource extends Resource
                     ->rows(3)
                     ->columnSpanFull(),
 
+                    Forms\Components\Textarea::make('solution')
+                    ->label('Rekomendasi Penanganan')
+                    ->placeholder('Contoh: Bersihkan pematang, pasang perangkap, lakukan gropyokan, dan gunakan pengendalian terpadu.')
+                    ->rows(4)
+                    ->columnSpanFull(),
+
                 Forms\Components\Section::make('Kecocokan Hama')
                     ->description('Pilih jenis komoditas, jenis tanah, dan kondisi cuaca yang mendukung kemunculan hama.')
                     ->schema([
@@ -101,6 +107,12 @@ class PestResource extends Resource
                     ->label('Nama Hama')
                     ->searchable()
                     ->sortable(),
+
+                Tables\Columns\TextColumn::make('solution')
+                    ->label('Rekomendasi')
+                    ->limit(70)
+                    ->wrap()
+                    ->searchable(),
 
                 Tables\Columns\TextColumn::make('commodityTypes.name')
                     ->label('Jenis Komoditas')

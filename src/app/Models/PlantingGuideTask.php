@@ -9,10 +9,10 @@ class PlantingGuideTask extends Model
 {
     protected $fillable = [
         'planting_guide_phase_id',
-        'start_day',
-        'end_day',
         'title',
         'description',
+        'start_day',
+        'end_day',
         'repeat_type',
         'repeat_interval_days',
         'sort_order',
