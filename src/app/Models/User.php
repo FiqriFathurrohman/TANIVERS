@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Filament\Models\Contracts\FilamentUser;
-use Filament\Panel;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements FilamentUser
@@ -20,10 +19,8 @@ class User extends Authenticatable implements FilamentUser
 
         'province',
         'city',
-        'regency',
         'district',
         'address',
-        'alamat',
 
         'province_id',
         'province_name',
@@ -36,28 +33,32 @@ class User extends Authenticatable implements FilamentUser
 
         'alamat_lengkap',
 
-        'role',
+        'email_verified_at',
+        'otp_code_hash',
+        'otp_expires_at',
     ];
 
     protected $hidden = [
         'password',
         'remember_token',
+        'otp_code_hash',
     ];
 
-   public function canAccessPanel(\Filament\Panel $panel): bool
-{
-    if ($this->email === 'admin@tanivers.com') {
-        return true;
-    }
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'otp_expires_at' => 'datetime',
+    ];
 
-    if (!empty($this->role) && in_array($this->role, ['admin', 'super_admin'])) {
-        return true;
-    }
+    public function canAccessPanel(\Filament\Panel $panel): bool
+    {
+        if ($this->email === 'admin@tanivers.com') {
+            return true;
+        }
 
-    if (method_exists($this, 'hasRole')) {
-        return $this->hasRole('admin') || $this->hasRole('super_admin');
-    }
+        if (method_exists($this, 'hasRole')) {
+            return $this->hasRole('admin') || $this->hasRole('super_admin');
+        }
 
-    return false;
-}
+        return false;
+    }
 }

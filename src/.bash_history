@@ -1,500 +1,500 @@
-                        <input type="tel" name="phone" value="{{ old('phone') }}" required 
-                            class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition text-sm text-slate-800" placeholder="0812xxxxxxxx">
-                    </div>
-                    <div class="md:col-span-2">
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Alamat Email</label>
-                        <input type="email" name="email" value="{{ old('email') }}" required 
-                            class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition text-sm text-slate-800" placeholder="nama@email.com">
-                    </div>
-                </div>
+        .textarea-modern {
+            resize: vertical;
+            background-image: none; /* Hilangkan icon panah di textarea */
+        }
+        .btn-toggle-pw {
+            position: absolute;
+            right: 16px;
+            background: transparent;
+            border: none;
+            color: #9CA3AF;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            transition: color 0.2s;
+        }
+        .btn-toggle-pw:hover {
+            color: #0F6E3F;
+        }
+        /* tombol utama premium */
+        .btn-submit {
+            width: 100%;
+            padding: 14px 18px;
+            background: #0F6E3F;
+            color: white;
+            border: none;
+            border-radius: 40px;
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 10px rgba(15, 110, 63, 0.25);
+        }
+        .btn-submit:hover {
+            background: #095A33;
+            transform: scale(1.01) translateY(-2px);
+            box-shadow: 0 12px 22px -8px rgba(15, 110, 63, 0.4);
+        }
+        .btn-submit:active {
+            transform: scale(0.98);
+        }
+        .switch-page {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.85rem;
+            color: #6C757D;
+            font-weight: 500;
+        }
+        .switch-page a {
+            color: #0F6E3F;
+            font-weight: 700;
+            text-decoration: none;
+            margin-left: 4px;
+            transition: all 0.2s;
+        }
+        .switch-page a:hover {
+            text-decoration: underline;
+            color: #0A4D2C;
+        }
+        /* Alert styling premium */
+        .alert {
+            padding: 0.9rem 1.2rem;
+            border-radius: 1.25rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            backdrop-filter: blur(2px);
+        }
+        .alert-error {
+            background: #FEF3F2;
+            color: #B91C1C;
+            border-left: 4px solid #DC2626;
+        }
+        .alert-success {
+            background: #ECFDF5;
+            color: #065F46;
+            border-left: 4px solid #10B981;
+        }
+        /* preview alamat */
+        .preview-address {
+            background: #F8FAFE;
+            border-radius: 1.25rem;
+            border: 1px solid #EFF3F8;
+            transition: all 0.2s;
+        }
+        /* MOBILE RESPONSIVE - Kembalikan ke mode scroll biasa di HP */
+        @media (max-width: 920px) {
+            body { overflow: auto; }
+            .split-layout {
+                flex-direction: column;
+                height: auto;
+                overflow: visible;
+            }
+            .panel-left {
+                min-height: 40vh;
+                height: auto;
+                padding: 2rem 1.8rem;
+            }
+            .hero-title {
+                font-size: 2.4rem;
+            }
+            .hero-content {
+                transform: translateY(0);
+                margin-top: 1rem;
+            }
+            .panel-right {
+                padding: 1.5rem 1.2rem;
+                height: auto;
+                overflow-y: visible;
+            }
+            .form-card {
+                padding: 1rem 0;
+            }
+        }
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+            .form-title {
+                font-size: 1.9rem;
+            }
+        }
+        .fade-up {
+            animation: fadeUp 0.5s ease forwards;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+<div class="split-layout">
+    <div class="panel-left">
+        <div class="leaf-pattern"></div>
+        <div class="brand-header">
+            <div class="logo-icon">
+                <i data-lucide="sprout" width="20" height="20" stroke="white" stroke-width="1.8"></i>
             </div>
-            <div>
-                <h3 class="text-xs font-bold uppercase tracking-widest text-emerald-600 mb-4 pb-1 border-b border-slate-100">Alamat & Cakupan Wilayah</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Provinsi</label>
-                        <select id="province" name="province" required 
-                            class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition text-sm text-slate-800 bg-white">
-                            <option value="">Pilih Provinsi</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Kota / Kabupaten</label>
-                        <select id="city" name="city" required disabled 
-                            class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition text-sm text-slate-800 bg-white disabled:bg-slate-100 disabled:cursor-not-allowed">
-                            <option value="">Pilih Kota/Kab</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Kecamatan</label>
-                        <select id="district" name="district" required disabled 
-                            class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition text-sm text-slate-800 bg-white disabled:bg-slate-100 disabled:cursor-not-allowed">
-                            <option value="">Pilih Kecamatan</option>
-                        </select>
-                    </div>
-                    <div class="md:col-span-3">
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Alamat Lengkap</label>
-                        <textarea name="address" required rows="3" 
-                            class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition text-sm text-slate-800 placeholder-slate-400" placeholder="Tulis nama jalan, Blok, RT/RW, dan nomor rumah..."></textarea>
-                    </div>
-                </div>
-            </div>
-            <div>
-                <h3 class="text-xs font-bold uppercase tracking-widest text-emerald-600 mb-4 pb-1 border-b border-slate-100">Keamanan</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">
-                            Kata Sandi <span class="text-slate-400 text-[10px] font-normal italic">(Min. 8 Karakter)</span>
-                        </label>
-                        <input type="password" name="password" minlength="8" required 
-                            class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition text-sm text-slate-800" placeholder="••••••••">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Konfirmasi Kata Sandi</label>
-                        <input type="password" name="password_confirmation" minlength="8" required 
-                            class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition text-sm text-slate-800" placeholder="••••••••">
-                    </div>
-                </div>
-            </div>
-            <button type="submit" 
-                class="w-full mt-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-4 rounded-xl transition shadow-xs cursor-pointer text-sm">
-                Daftar Akun Baru
-            </button>
-        </form>
-        <div class="text-center mt-6 pt-5 border-t border-slate-100">
-            <p class="text-sm text-slate-600">Sudah memiliki akun? 
-                <a href="{{ route('login') }}" class="font-semibold text-emerald-600 hover:text-emerald-700 transition">Masuk Sekarang</a>
+            <div class="brand-name">TANIVERS</div>
+        </div>
+        <div class="hero-content fade-up">
+            <h1 class="hero-title">Mulai<br>Perjalanan Digital</h1>
+            <p class="hero-subtitle">
+                Bergabunglah dengan ekosistem pertanian terpadu. Kelola lahan, pantau hasil panen, dan tingkatkan produktivitas dengan teknologi terkini.
             </p>
         </div>
+        <div class="footer-text">
+            <span>© 2026 TANIVERS — Ekosistem Digital Pertanian</span>
+        </div>
     </div>
-    <script>
-        const baseUrl = 'https://emsifa.github.io/api-wilayah-indonesia/api';
-        const provSelect = document.getElementById('province');
-        const citySelect = document.getElementById('city');
-        const distSelect = document.getElementById('district');
-        // Data Provinsi lokal asli Indonesia untuk bypass kendala jaringan Docker/WSL
-        const localProvinces = [
-            { id: "31", name: "DKI JAKARTA" },;             { id: "32", name: "JAWA BARAT" },;             { id: "36", name: "BANTEN" },;             { id: "33", name: "JAWA TENGAH" },;             { id: "34", name: "DI YOGYAKARTA" },;             { id: "35", name: "JAWA TIMUR" },;             { id: "11", name: "ACEH" },;             { id: "12", name: "SUMATERA UTARA" },;             { id: "13", name: "SUMATERA BARAT" },;             { id: "14", name: "RIAU" },;             { id: "15", name: "JAMBI" },;             { id: "16", name: "SUMATERA SELATAN" },;             { id: "17", name: "BENGKULU" },;             { id: "18", name: "LAMPUNG" },;             { id: "19", name: "KEPULAUAN BANGKA BELITUNG" },;             { id: "21", name: "KEPULAUAN RIAU" },;             { id: "51", name: "BALI" },;             { id: "52", name: "NUSA TENGGARA BARAT" },;             { id: "53", name: "NUSA TENGGARA TIMUR" },;             { id: "61", name: "KALIMANTAN BARAT" },;             { id: "62", name: "KALIMANTAN TENGAH" },;             { id: "63", name: "KALIMANTAN SELATAN" },;             { id: "64", name: "KALIMANTAN TIMUR" },;             { id: "65", name: "KALIMANTAN UTARA" },;             { id: "71", name: "SULAWESI UTARA" },;             { id: "72", name: "SULAWESI TENGAH" },;             { id: "73", name: "SULAWESI SELATAN" },;             { id: "74", name: "SULAWESI TENGGARA" },;             { id: "75", name: "GORONTALO" },;             { id: "76", name: "SULAWESI BARAT" },;             { id: "81", name: "MALUKU" },;             { id: "82", name: "MALUKU UTARA" },;             { id: "91", name: "PAPUA BARAT" },;             { id: "94", name: "PAPUA" };         ];         // 1. Me-render langsung provinsi dari data lokal (Anti Gagal)
-        function loadProvinces() {             localProvinces.forEach(prov => {
-                let opt = document.createElement('option');
-                opt.value = prov.name; 
-                opt.dataset.id = prov.id; 
-                opt.textContent = prov.name;
-                provSelect.appendChild(opt);
+    <div class="panel-right">
+        <div class="form-card fade-up">
+            <h2 class="form-title">Daftar Akun Baru</h2>
+            <p class="form-subtitle">Isi data diri untuk mengakses ekosistem pertanian cerdas.</p>
+            @if ($errors->any())
+            <div class="alert alert-error">
+                <ul style="list-style: disc; padding-left: 1.2rem; margin: 0;">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif
+            <form action="{{ route('register.post') }}" method="POST" novalidate>
+                @csrf
+                <div class="input-group">
+                    <label class="input-label" for="name">Nama Lengkap</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon"><i data-lucide="user" width="18" height="18"></i></span>
+                        <input type="text" name="name" id="name" class="input-field" value="{{ old('name') }}" placeholder="Nama lengkap sesuai KTP" required>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label class="input-label" for="email">Alamat Email</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon"><i data-lucide="mail" width="18" height="18"></i></span>
+                        <input type="email" name="email" id="email" class="input-field" value="{{ old('email') }}" placeholder="nama@perusahaan.com" required>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label class="input-label" for="phone">Nomor HP</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon"><i data-lucide="phone" width="18" height="18"></i></span>
+                        <input type="text" name="phone" id="phone" class="input-field" value="{{ old('phone') }}" placeholder="081234567890" required>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label class="input-label" for="password">Kata Sandi</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon"><i data-lucide="lock" width="18" height="18"></i></span>
+                        <input type="password" name="password" id="password" class="input-field" placeholder="Minimal 8 karakter" required>
+                        <button type="button" class="btn-toggle-pw" id="togglePasswordBtn" aria-label="Tampilkan sandi">
+                            <i data-lucide="eye" id="icon-eye-pw" width="18" height="18"></i>
+                            <i data-lucide="eye-off" id="icon-eye-off-pw" width="18" height="18" style="display: none;"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label class="input-label" for="password_confirmation">Konfirmasi Kata Sandi</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon"><i data-lucide="lock-keyhole" width="18" height="18"></i></span>
+                        <input type="password" name="password_confirmation" id="password_confirmation" class="input-field" placeholder="Ulangi kata sandi" required>
+                        <button type="button" class="btn-toggle-pw" id="toggleConfirmBtn" aria-label="Tampilkan konfirmasi">
+                            <i data-lucide="eye" id="icon-eye-confirm" width="18" height="18"></i>
+                            <i data-lucide="eye-off" id="icon-eye-off-confirm" width="18" height="18" style="display: none;"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="relative my-6">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-200"></div>
+                    </div>
+                    <div class="relative flex justify-center text-xs">
+                        <span class="bg-white px-3 text-gray-500 font-semibold tracking-wider">DETAIL ALAMAT</span>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label class="input-label" for="province">Provinsi</label>
+                    <select name="province_id" id="province" class="select-modern" required>
+                        <option value="">Memuat provinsi...</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label class="input-label" for="city">Kota/Kabupaten</label>
+                    <select name="city_id" id="city" class="select-modern" required disabled>
+                        <option value="">Pilih provinsi terlebih dahulu</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label class="input-label" for="district">Kecamatan</label>
+                    <select name="district_id" id="district" class="select-modern" required disabled>
+                        <option value="">Pilih kota/kabupaten terlebih dahulu</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label class="input-label" for="alamat_lengkap">Alamat Lengkap</label>
+                    <textarea name="alamat_lengkap" id="alamat_lengkap" class="textarea-modern" rows="3" placeholder="Nama jalan, nomor rumah, RT/RW, kelurahan/desa, dll.">{{ old('alamat_lengkap') }}</textarea>
+                </div>
+                <input type="hidden" name="province_name" id="province_name" value="{{ old('province_name') }}">
+                <input type="hidden" name="city_name" id="city_name" value="{{ old('city_name') }}">
+                <input type="hidden" name="district_name" id="district_name" value="{{ old('district_name') }}">
+                <div class="preview-address p-4 mb-5">
+                    <div class="flex items-center gap-2 text-primary font-semibold text-xs uppercase tracking-wide mb-2">
+                        <i data-lucide="map-pin" width="14" height="14"></i>
+                        <span>Preview alamat ringkas</span>
+                    </div>
+                    <div class="grid grid-cols-1 gap-1 text-sm">
+                        <div class="flex justify-between border-b border-gray-100 pb-1">
+                            <span class="text-gray-500">Provinsi:</span>
+                            <span id="show_province" class="font-medium text-gray-800">-</span>
+                        </div>
+                        <div class="flex justify-between border-b border-gray-100 pb-1">
+                            <span class="text-gray-500">Kota/Kab.:</span>
+                            <span id="show_city" class="font-medium text-gray-800">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Kecamatan:</span>
+                            <span id="show_district" class="font-medium text-gray-800">-</span>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn-submit">
+                    <i data-lucide="user-plus" width="18" height="18"></i>
+                    <span>Daftar Sekarang</span>
+                </button>
+                <div class="switch-page">
+                    Sudah memiliki akun?
+                    <a href="{{ route('login') }}">Masuk ke dashboard →</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    // Inisialisasi Lucide Icons
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+        // ========== TOGGLE PASSWORD (Register) ==========
+        const togglePw = document.getElementById('togglePasswordBtn');
+        const passwordField = document.getElementById('password');
+        const eyePw = document.getElementById('icon-eye-pw');
+        const eyeOffPw = document.getElementById('icon-eye-off-pw');
+        if (togglePw && passwordField) {
+            togglePw.addEventListener('click', function() {
+                const isPassword = passwordField.type === 'password';
+                if (isPassword) {
+                    passwordField.type = 'text';
+                    if (eyePw) eyePw.style.display = 'none';
+                    if (eyeOffPw) eyeOffPw.style.display = 'block';
+                } else {
+                    passwordField.type = 'password';
+                    if (eyePw) eyePw.style.display = 'block';
+                    if (eyeOffPw) eyeOffPw.style.display = 'none';
+                }
             });
         }
-        loadProvinces();
-        // 2. Event saat Provinsi dipilih -> Ambil Kota/Kabupaten
-        provSelect.addEventListener('change', function() {
-            citySelect.innerHTML = '<option value="">Pilih Kota/Kab</option>';
-            distSelect.innerHTML = '<option value="">Pilih Kecamatan</option>';
-            citySelect.disabled = true;
-            distSelect.disabled = true;
-            const selectedOption = this.options[this.selectedIndex];
-            const provId = selectedOption.dataset.id;
-            if (provId) {
-                fetch(`${baseUrl}/regencies/${provId}.json`)
-                    .then(res => res.json())
-                    .then(regencies => {
-                        regencies.forEach(city => {
-                            let opt = document.createElement('option');
-                            opt.value = city.name;
-                            opt.dataset.id = city.id; 
-                            opt.textContent = city.name;
-                            citySelect.appendChild(opt);
-                        });
-                        citySelect.disabled = false;
-                    })
-                    .catch(err => {
-                        console.error('Eror jaringan saat mengambil data Kota, mengaktifkan input manual...', err);
-                        // JIKA API BLOCKED: Ubah select menjadi input text biasa agar user tidak stuck!
-                        fallbackToInput(citySelect, 'city', 'Tulis nama Kota/Kabupaten');
-                    });
-            }
-        });
-        // 3. Event saat Kota dipilih -> Ambil Kecamatan
-        citySelect.addEventListener('change', function() {
-            distSelect.innerHTML = '<option value="">Pilih Kecamatan</option>';
-            distSelect.disabled = true;
-            const selectedOption = this.options[this.selectedIndex];
-            const cityId = selectedOption.dataset.id;
-            if (cityId) {
-                fetch(`${baseUrl}/districts/${cityId}.json`)
-                    .then(res => res.json())
-                    .then(districts => {
-                        districts.forEach(dist => {
-                            let opt = document.createElement('option');
-                            opt.value = dist.name;
-                            opt.textContent = dist.name;
-                            distSelect.appendChild(opt);
-                        });
-                        distSelect.disabled = false;
-                    })
-                    .catch(err => {
-                        console.error('Eror jaringan saat mengambil data Kecamatan, mengaktifkan input manual...', err);
-                        fallbackToInput(distSelect, 'district', 'Tulis nama Kecamatan');
-                    });
-            }
-        });
-        // Fungsi penyelamat jika API terblokir di tingkat Kota/Kecamatan agar input berubah jadi ketik manual
-        function fallbackToInput(element, name, placeholder) {
-            const input = document.createElement('input');
-            input.type = 'text';
-            input.name = name;
-            input.id = element.id;
-            input.required = true;
-            input.className = "w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition text-sm text-slate-800";
-            input.placeholder = placeholder;
-            element.replaceWith(input);
+        // Toggle untuk konfirmasi password
+        const toggleConfirm = document.getElementById('toggleConfirmBtn');
+        const confirmField = document.getElementById('password_confirmation');
+        const eyeConfirm = document.getElementById('icon-eye-confirm');
+        const eyeOffConfirm = document.getElementById('icon-eye-off-confirm');
+        if (toggleConfirm && confirmField) {
+            toggleConfirm.addEventListener('click', function() {
+                const isConfirm = confirmField.type === 'password';
+                if (isConfirm) {
+                    confirmField.type = 'text';
+                    if (eyeConfirm) eyeConfirm.style.display = 'none';
+                    if (eyeOffConfirm) eyeOffConfirm.style.display = 'block';
+                } else {
+                    confirmField.type = 'password';
+                    if (eyeConfirm) eyeConfirm.style.display = 'block';
+                    if (eyeOffConfirm) eyeOffConfirm.style.display = 'none';
+                }
+            });
         }
-    </script>
+        // ========== WILAYAH INTEGRATION ==========
+        const apiUrl = '/wilayah';
+        const provinceSelect = document.getElementById('province');
+        const citySelect = document.getElementById('city');
+        const districtSelect = document.getElementById('district');
+        const provinceNameInput = document.getElementById('province_name');
+        const cityNameInput = document.getElementById('city_name');
+        const districtNameInput = document.getElementById('district_name');
+        const showProvince = document.getElementById('show_province');
+        const showCity = document.getElementById('show_city');
+        const showDistrict = document.getElementById('show_district');
+        const oldProvinceId = "{{ old('province_id') }}";
+        const oldCityId = "{{ old('city_id') }}";
+        const oldDistrictId = "{{ old('district_id') }}";
+        function resetSelect(selectElement, placeholder, disabled = true) {
+            selectElement.innerHTML = `<option value="">${placeholder}</option>`;
+            selectElement.disabled = disabled;
+        }
+        function getSelectedText(selectElement) {
+            return selectElement.options[selectElement.selectedIndex]?.text || '';
+        }
+        function updatePreview() {             showProvince.innerText = provinceNameInput.value || '-';             showCity.innerText = cityNameInput.value || '-';             showDistrict.innerText = districtNameInput.value || '-';         }
+        async function loadProvinces() {
+            try {
+                resetSelect(provinceSelect, 'Memuat provinsi...', false);
+                const response = await fetch(`${apiUrl}/provinces`);
+                const provinces = await response.json();
+                resetSelect(provinceSelect, 'Pilih Provinsi', false);
+                provinces.forEach(province => {
+                    const selected = province.id == oldProvinceId ? 'selected' : '';
+                    provinceSelect.innerHTML += `<option value="${province.id}" ${selected}>${province.name}</option>`;
+                });
+                if (oldProvinceId) {
+                    provinceNameInput.value = getSelectedText(provinceSelect);
+                    await loadCities(oldProvinceId);
+                }
+                updatePreview();
+            } catch (error) {
+                resetSelect(provinceSelect, 'Gagal memuat provinsi', true);
+                console.error(error);
+            }
+        }
+        async function loadCities(provinceId) {
+            try {
+                resetSelect(citySelect, 'Memuat kota/kab...', true);
+                resetSelect(districtSelect, 'Pilih kota/kabupaten terlebih dahulu', true);
+                const response = await fetch(`${apiUrl}/cities/${provinceId}`);
+                const cities = await response.json();
+                resetSelect(citySelect, 'Pilih Kota/Kabupaten', false);
+                cities.forEach(city => {
+                    const selected = city.id == oldCityId ? 'selected' : '';
+                    citySelect.innerHTML += `<option value="${city.id}" ${selected}>${city.name}</option>`;
+                });
+                if (oldCityId) {
+                    cityNameInput.value = getSelectedText(citySelect);
+                    await loadDistricts(oldCityId);
+                }
+                updatePreview();
+            } catch (error) {
+                resetSelect(citySelect, 'Gagal memuat kota', true);
+                console.error(error);
+            }
+        }
+        async function loadDistricts(cityId) {
+            try {
+                resetSelect(districtSelect, 'Memuat kecamatan...', true);
+                const response = await fetch(`${apiUrl}/districts/${cityId}`);
+                const districts = await response.json();
+                resetSelect(districtSelect, 'Pilih Kecamatan', false);
+                districts.forEach(district => {
+                    const selected = district.id == oldDistrictId ? 'selected' : '';
+                    districtSelect.innerHTML += `<option value="${district.id}" ${selected}>${district.name}</option>`;
+                });
+                if (oldDistrictId) {
+                    districtNameInput.value = getSelectedText(districtSelect);
+                }
+                updatePreview();
+            } catch (error) {
+                resetSelect(districtSelect, 'Gagal memuat kecamatan', true);
+                console.error(error);
+            }
+        }
+        provinceSelect.addEventListener('change', async function() {
+            const provinceId = this.value;
+            provinceNameInput.value = getSelectedText(this);
+            cityNameInput.value = '';
+            districtNameInput.value = '';
+            resetSelect(citySelect, 'Pilih kota/kabupaten', true);
+            resetSelect(districtSelect, 'Pilih kecamatan', true);
+            updatePreview();
+            if (provinceId) await loadCities(provinceId);
+        });
+        citySelect.addEventListener('change', async function() {
+            const cityId = this.value;
+            cityNameInput.value = getSelectedText(this);
+            districtNameInput.value = '';
+            resetSelect(districtSelect, 'Pilih kecamatan', true);
+            updatePreview();
+            if (cityId) await loadDistricts(cityId);
+        });
+        districtSelect.addEventListener('change', function() {
+            districtNameInput.value = getSelectedText(this);
+            updatePreview();
+        });
+        loadProvinces();
+        // Efek fokus pada input icon (optional)
+        const allInputWrappers = document.querySelectorAll('.input-wrapper');
+        allInputWrappers.forEach(wrapper => {
+            const input = wrapper.querySelector('input');
+            const iconSpan = wrapper.querySelector('.input-icon');
+            if (input && iconSpan) {
+                input.addEventListener('focus', () => iconSpan.style.color = '#0F6E3F');
+                input.addEventListener('blur', () => {
+                    else iconSpan.style.color = '#6B7280';
+                });
+            }
+        });
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+    });
+    window.addEventListener('load', function() {
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+        const pwField = document.getElementById('password');
+        const eyePw = document.getElementById('icon-eye-pw');
+        const eyeOffPw = document.getElementById('icon-eye-off-pw');
+        if (pwField && pwField.type === 'password') {
+            if (eyePw) eyePw.style.display = 'block';
+            if (eyeOffPw) eyeOffPw.style.display = 'none';
+        }
+        const confirmField = document.getElementById('password_confirmation');
+        const eyeConfirm = document.getElementById('icon-eye-confirm');
+        const eyeOffConfirm = document.getElementById('icon-eye-off-confirm');
+        if (confirmField && confirmField.type === 'password') {
+            if (eyeConfirm) eyeConfirm.style.display = 'block';
+            if (eyeOffConfirm) eyeOffConfirm.style.display = 'none';
+        }
+    });
+</script>
 </body>
 </html>
-php artisan make:model Address -m
-php artisan make:controller AddressController
+php artisan make:migration add_otp_columns_to_users_table --table=users
 php artisan migrate
-<?php
-use Illuminate\Support\Facades\Route;
-use Livewire\Livewire;
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\WilayahController;
-/* NOTE: Do Not Remove
-/ Livewire asset handling if using sub folder in domain
-*/
-Livewire::setUpdateRoute(function ($handle) {
-    return Route::post(config('app.asset_prefix') . '/livewire/update', $handle);
-});
-Livewire::setScriptRoute(function ($handle) {
-    return Route::get(config('app.asset_prefix') . '/livewire/livewire.js', $handle);
-});
-/*
-/ END
-*/
-// --- AKAR RUTE ---
-Route::get('/', function () {
-    return redirect()->route('login');
-});
-// --- RUTE AUTENTIKASI ---
-Route::get('/login', function () {
-    return view('auth.login');
-})->name('login');
-Route::get('/register', function () {
-    return view('auth.register');
-})->name('register');
-Route::get('/forgot-password', function () {
-    return 'Fitur reset password dalam tahap pengembangan.';
-})->name('password.request');
-// --- PROSES LOGIN & REGISTER ---
-Route::post('/login', [LoginController::class, 'login'])->name('login.post');
-Route::post('/register', [RegisterController::class, 'register'])->name('register.post');
-// --- API WILAYAH LOKAL ---
-Route::get('/wilayah/provinces', [WilayahController::class, 'provinces'])->name('wilayah.provinces');
-Route::get('/wilayah/cities/{provinceId}', [WilayahController::class, 'cities'])->name('wilayah.cities');
-Route::get('/wilayah/districts/{cityId}', [WilayahController::class, 'districts'])->name('wilayah.districts');
-<?php
-use Illuminate\Support\Facades\Route;
-use Livewire\Livewire;
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\WilayahController;
-/* NOTE: Do Not Remove
-/ Livewire asset handling if using sub folder in domain
-*/
-Livewire::setUpdateRoute(function ($handle) {
-    return Route::post(config('app.asset_prefix') . '/livewire/update', $handle);
-});
-Livewire::setScriptRoute(function ($handle) {
-    return Route::get(config('app.asset_prefix') . '/livewire/livewire.js', $handle);
-});
-/*
-/ END
-*/
-// --- AKAR RUTE ---
-Route::get('/', function () {
-    return redirect()->route('login');
-});
-// --- RUTE AUTENTIKASI ---
-Route::get('/login', function () {
-    return view('auth.login');
-})->name('login');
-Route::get('/register', function () {
-    return view('auth.register');
-})->name('register');
-Route::get('/forgot-password', function () {
-    return 'Fitur reset password dalam tahap pengembangan.';
-})->name('password.request');
-// --- PROSES LOGIN & REGISTER ---
-Route::post('/login', [LoginController::class, 'login'])->name('login.post');
-Route::post('/register', [RegisterController::class, 'register'])->name('register.post');
-// --- API WILAYAH LOKAL ---
-Route::get('/wilayah/provinces', [WilayahController::class, 'provinces'])->name('wilayah.provinces');
-Route::get('/wilayah/cities/{provinceId}', [WilayahController::class, 'cities'])->name('wilayah.cities');
-Route::get('/wilayah/districts/{cityId}', [WilayahController::class, 'districts'])->name('wilayah.districts');
-php artisan make:controller WilayahController
-php artisan make:controller RegistrasiController
-php artisan make:controller RegisterController
-php artisan optimize:clear
-composer dump-autoload
-composer dump-autoload
-php artisan optimize:clear
-php artisan route:clear
-php artisan config:clear
-php artisan view:clear
-php artisan make:migration add_address_columns_to_users_table --table=users
-php artisan migrate
-php artisan make:filament-user
-php artisan migrate:fresh --seed
-php artisan migrate:fresh --seed
-php artisan migrate:fresh --seed
-php artisan migrate:fresh --seed
-composer dump-autoload
-php artisan optimize:clear
-php artisan migrate:fresh --seed
-php artisan make:model Commodity -m
-composer dump-autoload
-php artisan optimize:clear
-php artisan migrate:fresh --seed
-mkdir -p app/Filament/Resources/Commodities/Pages
-php artisan make:filament-resource Komuditas --panel=admin --generate
-php artisan make:model Lahan -m
-php artisan make:controller LahanController
-php artisan migrate
-exit
-php artisan make:model CommodityType -m
-php artisan migrate
-php artisan migrate
-php artisan make:filament-resource CommodityType --panel=admin --generate
-php artisan migrate
-php artisan optimize:clear
-php artisan make:migration create_soil_types_table --create=soil_types
-php artisan make: model SoilType
-php artisan make:model SoilType
-php artisan make:filament-resource SoilType --panel=admin --generate
-composer dump-autoload
-php artisan migrate
-php artisan optimize:clear
-php artisan filament:clear-cached-components
-exit
-php artisan optimize:clear
-php artisan view:clear
-php artisan filament:clear-cached-components
-php artisan migrate
-php artisan migrate
-php artisan optimize:clear
-php artisan filament:clear-cached-components
-php artisan make:migration fix_commodity_soil_type_pivot_table
-php artisan migrate
-php artisan make:filament-resource Hama --panel=admin --generate
-php artisan make:model Pest -m
-php artisan make:model WeatherCondition -m
-php artisan make:model Hama
-composer dump-autoload
-php artisan optimize:clear
-php artisan make:model Pest -m
-php artisan make:model WeatherCondition -m
-php artisan make:filament-resource Pest
-php artisan make:filament-resource WeatherCondition
-php artisan migrate
-php artisan migrate
-php artisan optimize:clear
-php artisan view:clear
-php artisan filament:clear-cached-components
-php artisan make:migration add_weather_conditions_to_pests_table --table=pests
-php artisan migrate
-composer dump-autoload
-php artisan optimize:clear
-php artisan view:clear
-php artisan filament:clear-cached-components
-php artisan optimize:clear
-php artisan view:clear
-php artisan filament:clear-cached-components
-php artisan migrate
-php artisan tinker
-php artisan tinker
-php artisan optimize:clear
-php artisan view:clear
-php artisan filament:clear-cached-components
-php artisan tinker
-exit
-composer install
-cp .env.example .env
-php artisan key:generate
-nano .env
-exit
-php artisan key:generate
-php artisan optimize:clear
-php artisan migrate
-php artisan db:seed
-php artisan db:seed
-php artisan optimize:clear
+mkdir -p app/Services
+touch app/Services/OtpService.php
+php artisan make:mail OtpCodeMail
+mkdir -p resources/views/emails
+touch resources/views/emails/otp-code.blade.php
+php artisan make:controller Auth/OtpController
+touch resources/views/auth/verify-otp.blade.php
 php artisan optimize:clear
 php artisan config:clear
+php artisan cache:clear
+php artisan tinker
+php artisan tinker
 php artisan optimize:clear
-php artisan optimize:clear
-exit
-php artisan make:model PlantingGuide -m
-php artisan make:model PlantingGuideTask -m
-mkdir -p app/Filament/Admin/Resources/PlantingGuideResource/Pages
-nano app/Filament/Admin/Resources/PlantingGuideResource.php
-mkdir -p app/Filament/Admin/Resources/PlantingGuideResource/Pages
-php artisan migrate
-php artisan optimize:clear
-php artisan migrate:fresh --seed
-php artisan optimize:clear
-php artisan make:model PlantingGuidePhase
-php artisan migrate:fresh --seed
-php artisan optimize:clear
-php artisan optimize:clear
-exit
-php artisan migrate
-php artisan optimize:clear
-php artisan make:model PreProductionPlan -m
-php artisan make:controller PreProductionController
-php artisan migrate
-php artisan optimize:clear
-php artisan route:list | grep pre-production
-php artisan optimize:clear
-php artisan route:clear
 php artisan config:clear
-php artisan view:clear
-php artisan route:list
-php artisan optimize:clear
-php artisan optimize:clear
-php artisan optimize:clear
-php artisan optimize:clear
-src/database/migrations/xxxx_xx_xx_xxxxxx_add_soil_type_columns_to_lahans_table.php
-docker compose exec taniverse_app php artisan make:migration add_soil_type_columns_to_lahans_table --table=lahans
-php artisan make:migration add_soil_type_columns_to_lahans_table --table=lahans
-php artisan migrate
-php artisan optimize:clear
-php artisan optimize:clear
-exit
-php artisan make:migration fix_unique_active_planting_guides_table --table=planting_guides
-php artisan migrate
-php artisan optimize:clear
-php artisan migrate
-php artisan optimize:clear
-php artisan migrate
-php artisan 
-php artisan migrate:fresh --seed
-exit
-exit
-exit
-cd /var/www
-pwd
-exit
-php artisan migrate
-php artisan optimize:clear
-php artisan make:model ExecutionTaskCheck -m
-php artisan make:controller PelaksanaanController
-exit
-php artisan migrate
-php artisan optimize:clear
-php artisan route:list --path=pelaksanaan
-php artisan optimize:clear
-php artisan optimize:clear
-docker compose exec taniverse_app php artisan make:model ExecutionPestReport -m
-php artisan make:model ExecutionPestReport -m
-php artisan migrate
-php artisan storage:link
-php artisan optimize:clear
-php artisan make:model Disease -m
-mkdir -p src/app/Filament/Admin/Resources/DiseaseResource/Pages
-php artisan migrate
-php artisan optimize:clear
-php artisan make:migration add_solution_to_pests_table --table=pests
-php artisan migrate
-php artisan migrate
-php optimize:clear
-php artisan optimize:clear
-php artisan optimize:clear
-php artisan optimize:clear
-php artisan optimize:clear
-php artisan optimize:clear
-php artisan make:migration create_disease_match_tables
-php artisan optimize:clear
-php artisan migrate
-php artisan optimize:clear
-php artisan optimize:clear
-php artisan migrate:status
-php artisan migrate:fresh --seed
-php artisan optimize:clear
-php artisan migrate
-php artisan optimize:clear
-php artisan tinker
-php artisan migrate:fresh --seed
-php artisan optimize:clear
-php artisan tinker
+php artisan cache:clear
 php artisan tinker
 php artisan optimize:clear
-ls -la app/Filament/Admin/Resources/DiseaseResource.php
-ls -la app/Filament/Admin/Resources/DiseaseResource/Pages
-cd /var/www
-ls -la app/Filament/Admin/Resources/DiseaseResource.php
-ls -la app/Filament/Admin/Resources/DiseaseResource/Pages
-ls -la app/Filament/Admin/Resources/DiseaseResource/Pages
-composer dump-autoload
+php artisan config:clear
+php artisan cache:clear
 php artisan optimize:clear
-php artisan route:list | grep diseases
-php artisan migrate:fresh --seed
+php artisan cache:clear
 php artisan optimize:clear
-php artisan migrate:fresh --seed
+php artisan cache:clear
+php artisan migrate:fresh
 php artisan optimize:clear
-php artisan migrate:fresh --seed
-php artisan storage:link
+php artisan config:clear
+php artisan cache:clear
 php artisan optimize:clear
-php artisan make:model ExecutionExpense -m
-php artisan make:model ExecutionExpenseItem -m
-php artisan optimize:clear
-cd /var/www
-ls database/migrations | grep execution_expense
-php artisan optimize:clear
-php artisan migrate
-php artisan optimize:clear
-exit
-cd /var/www
-composer dump-autoload
-php artisan optimize:clear
-php artisan route:list | grep data-user-pertanian
-ls -la app/Filament/Admin/Resources/UserAgricultureResource.php
-ls -la app/Filament/Admin/Resources/UserAgricultureResource/Pages
-composer dump-autoload
-php artisan optimize:clear
-ls -la app/Filament/Admin/Resources/UserAgricultureResource/Pages
-php artisan route:list | grep data-user-pertanian
-composer dump-autoload
-composer dump-autoload
-php artisan optimize:clear
-composer dump-autoload
-composer dump-autoload
-php artisan optimize:clear
-php artisan optimize:clear
+php artisan config:clear
+php artisan cache:clear
 php artisan tinker
 php artisan optimize:clear
-php artisan optimize:clear
-php artisan optimize:clear
-php artisan optimize:clear
-exit
-php artisan optimize:clear
-composer dump-autoload
-php artisan optimize:clear
-mkdir -p resources/views/riwayat-laporan
-cd /var/www
-composer dump-autoload
-php artisan optimize:clear
-php artisan optimize:clear
-exit
-cd /var/www/
-composer dump-autoload
-php artisan optimize:clear
-php artisan migrate
-composer dump-autoload
-php artisan optimize:clear
-php artisan tinker
-grep -R "planting_guide_id" -n app resources routes database
-composer dump-autoload
-php artisan optimize:clear
-composer dump-autoload
-php artisan optimize:clear
+php artisan config:clear
+php artisan cache:clear
+php artisan migrate:fresh
+php artisan project:init
 exit

@@ -4,107 +4,63 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\OtpService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Schema;
 
 class RegisterController extends Controller
 {
-    public function register(Request $request)
+    public function register(Request $request, OtpService $otpService)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'phone' => ['required', 'string', 'max:20'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
 
-            'email' => 'required|string|email|max:255|unique:users,email',
+            'province_id' => ['required'],
+            'province_name' => ['required', 'string', 'max:255'],
 
-            'phone' => 'required|string|max:20',
+            'city_id' => ['required'],
+            'city_name' => ['required', 'string', 'max:255'],
 
-            'password' => 'required|string|min:6|confirmed',
+            'district_id' => ['required'],
+            'district_name' => ['required', 'string', 'max:255'],
 
-            'province_id' => 'required|string',
-            'province_name' => 'required|string',
-
-            'city_id' => 'required|string',
-            'city_name' => 'required|string',
-
-            'district_id' => 'required|string',
-            'district_name' => 'required|string',
-
-            'alamat_lengkap' => 'nullable|string',
-        ], [
-            'name.required' => 'Nama lengkap wajib diisi.',
-
-            'email.required' => 'Email wajib diisi.',
-            'email.email' => 'Format email tidak valid.',
-            'email.unique' => 'Email sudah digunakan.',
-
-            'phone.required' => 'Nomor HP wajib diisi.',
-
-            'password.required' => 'Password wajib diisi.',
-            'password.min' => 'Password minimal 6 karakter.',
-            'password.confirmed' => 'Konfirmasi password tidak sesuai.',
-
-            'province_id.required' => 'Provinsi wajib dipilih.',
-            'province_name.required' => 'Nama provinsi tidak terbaca.',
-
-            'city_id.required' => 'Kota/Kabupaten wajib dipilih.',
-            'city_name.required' => 'Nama kota/kabupaten tidak terbaca.',
-
-            'district_id.required' => 'Kecamatan wajib dipilih.',
-            'district_name.required' => 'Nama kecamatan tidak terbaca.',
+            'alamat_lengkap' => ['nullable', 'string', 'max:1000'],
         ]);
 
-        $data = [
-            'name' => $request->name,
-            'email' => $request->email,
-            'phone' => $request->phone,
+        $alamatLengkap = $validated['alamat_lengkap'] ?? null;
 
-            'password' => Hash::make($request->password),
+        $user = User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'phone' => $validated['phone'],
+            'password' => Hash::make($validated['password']),
 
-            // Kolom baru
-            'province_id' => $request->province_id,
-            'province_name' => $request->province_name,
+            'province_id' => $validated['province_id'],
+            'province_name' => $validated['province_name'],
+            'province' => $validated['province_name'],
 
-            'city_id' => $request->city_id,
-            'city_name' => $request->city_name,
+            'city_id' => $validated['city_id'],
+            'city_name' => $validated['city_name'],
+            'city' => $validated['city_name'],
 
-            'district_id' => $request->district_id,
-            'district_name' => $request->district_name,
+            'district_id' => $validated['district_id'],
+            'district_name' => $validated['district_name'],
+            'district' => $validated['district_name'],
 
-            'alamat_lengkap' => $request->alamat_lengkap,
-        ];
+            'alamat_lengkap' => $alamatLengkap,
+            'address' => $alamatLengkap,
+        ]);
 
-        // Untuk kolom lama yang masih ada di tabel users
-        if (Schema::hasColumn('users', 'province')) {
-            $data['province'] = $request->province_name;
-        }
+        $otpService->send($user);
 
-        if (Schema::hasColumn('users', 'city')) {
-            $data['city'] = $request->city_name;
-        }
-
-        if (Schema::hasColumn('users', 'regency')) {
-            $data['regency'] = $request->city_name;
-        }
-
-        if (Schema::hasColumn('users', 'district')) {
-            $data['district'] = $request->district_name;
-        }
-
-        if (Schema::hasColumn('users', 'address')) {
-            $data['address'] = $request->alamat_lengkap ?? '-';
-        }
-
-        if (Schema::hasColumn('users', 'alamat')) {
-            $data['alamat'] = $request->alamat_lengkap ?? '-';
-        }
-
-        $user = new User();
-        $user->forceFill($data);
-        $user->save();
+        Auth::login($user);
 
         return redirect()
-            ->route('login')
-            ->with('success', 'Registrasi berhasil. Silakan login.');
+            ->route('otp.form')
+            ->with('status', 'Registrasi berhasil. Kode OTP sudah dikirim ke email Anda.');
     }
 }

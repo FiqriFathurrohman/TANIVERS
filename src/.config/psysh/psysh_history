@@ -14,3 +14,22 @@ App\Models\ExecutionTaskCheck::count();
 exit
 Schema::getColumnListing('planting_guide_tasks');
 exit
+config('services.google')
+config('services.google')
+php artisan optimize:clear
+php artisan config:clear
+php artisan cache:clear
+EXT
+EXIT
+config('services.google')
+EXIT
+config('mail.mailers.smtp')
+config('mail.from')
+config('mail.from')
+config('mail.mailers.smtp')
+config('mail.mailers.smtp')
+exit
+config('mail.mailers.smtp')
+exit
+Schema::getColumnListing('users');
+exit

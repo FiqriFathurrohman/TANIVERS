@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # 1. TaniVerse Application (Laravel PHP-FPM)
   taniverse_app:
@@ -25,7 +23,7 @@ services:
     container_name: taniverse_nginx
     restart: unless-stopped
     ports:
-      - "80:80"
+      - "8080:80"
       - "443:443"
     volumes:
       - ./src:/var/www
@@ -45,7 +43,7 @@ services:
       POSTGRES_USER: ${DB_USER:-djambred}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-p455w0rd1!.}
     ports:
-      - "5432:5432"
+      - "5433:5432" # Diubah ke 5433 agar tidak bentrok dengan Postgres lokal kamu
     volumes:
       - ./db/postgresql_data:/var/lib/postgresql/data
     healthcheck:
