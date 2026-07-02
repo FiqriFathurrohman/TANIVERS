@@ -1,1 +1,1 @@
-/usr/local/bin/postgres
+/usr/local/bin/postgres "-c" "fsync=off" "-c" "full_page_writes=off"

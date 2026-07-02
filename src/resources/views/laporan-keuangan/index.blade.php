@@ -7,9 +7,16 @@
     .finance-card {
         background: rgba(255, 255, 255, 0.96);
         backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
         border-radius: 1.75rem;
         border: 1px solid rgba(255, 255, 255, 1);
         box-shadow: 0 10px 40px -10px rgba(15, 110, 63, 0.08), 0 1px 3px rgba(0, 0, 0, 0.02);
+        transition: all 0.3s ease;
+    }
+
+    .finance-card:hover {
+        box-shadow: 0 15px 50px -10px rgba(15, 110, 63, 0.12), 0 4px 6px rgba(0, 0, 0, 0.03);
+        transform: translateY(-2px);
     }
 
     .finance-input {
@@ -126,7 +133,7 @@
                 Laporan <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-emerald-600">Keuangan</span>
             </h1>
 
-            <p class="text-base text-slate-500 flex items-center gap-2">
+            <p class="text-sm md:text-base text-slate-500 flex items-center gap-2">
                 <i data-lucide="chart-no-axes-combined" size="18" class="text-amber-600"></i>
                 Ringkasan anggaran, pengeluaran, pendapatan panen, laba/rugi, dan rekomendasi biaya.
             </p>
@@ -134,7 +141,7 @@
 
         @if($selectedPlan)
             <a href="{{ route('riwayat-laporan.index', ['plan_id' => $selectedPlan->id]) }}"
-               class="inline-flex items-center justify-center gap-2 rounded-full bg-slate-900 px-5 py-3 text-white font-black hover:bg-slate-800 transition">
+               class="inline-flex items-center justify-center gap-2 rounded-full bg-slate-900 px-5 py-3 text-white font-black hover:bg-slate-800 transition text-sm md:text-base w-full md:w-auto">
                 <i data-lucide="history" size="16"></i>
                 Riwayat Laporan
             </a>
@@ -186,7 +193,7 @@
 
             {{-- Left Panel --}}
             <div class="xl:col-span-4">
-                <div class="finance-card p-6 space-y-6 xl:sticky xl:top-6">
+                <div class="finance-card p-5 md:p-6 space-y-6 xl:sticky xl:top-6">
                     <div>
                         <h2 class="text-xl font-bold text-slate-800 font-serif mb-1">
                             Filter Keuangan
@@ -203,7 +210,7 @@
                         </label>
 
                         <select name="plan_id"
-                                class="finance-input"
+                                class="finance-input font-bold text-slate-800"
                                 onchange="this.form.submit()">
                             @foreach($plans as $plan)
                                 <option value="{{ $plan->id }}"
@@ -218,22 +225,18 @@
                     @if($selectedPlan)
                         <div class="rounded-2xl bg-gradient-to-br from-emerald-50 to-white border border-emerald-100 p-5 space-y-4">
                             <div>
-                                <p class="text-xs font-black uppercase tracking-wide text-emerald-700">
-                                    Lahan
-                                </p>
+                                <p class="text-xs font-black uppercase tracking-wide text-emerald-700">Lahan</p>
                                 <p class="text-xl font-black text-emerald-950 mt-1">
                                     {{ $selectedPlan->lahan?->nama_lahan ?? 'Lahan Tidak Ditemukan' }}
                                 </p>
                             </div>
 
                             <div>
-                                <p class="text-xs font-black uppercase tracking-wide text-emerald-700">
-                                    Komoditas
-                                </p>
+                                <p class="text-xs font-black uppercase tracking-wide text-emerald-700">Komoditas</p>
                                 <p class="text-lg font-black text-emerald-950 mt-1">
                                     {{ $selectedPlan->commodity?->name ?? '-' }}
                                 </p>
-                                <p class="text-sm text-emerald-700">
+                                <p class="text-sm font-bold text-emerald-600">
                                     {{ $selectedPlan->commodityType?->name ?? '-' }}
                                 </p>
                             </div>
@@ -257,13 +260,71 @@
             {{-- Right Panel --}}
             <div class="xl:col-span-8 space-y-8">
 
-                {{-- Summary --}}
-                <div class="finance-card p-6">
+                {{-- ======================================================== --}}
+                {{-- PREMIUM DUAL AI GRID DASHBOARD (ROI & YIELD PREDICTION) --}}
+                {{-- ======================================================== --}}
+                @if($selectedPlan)
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    
+                    {{-- Kotak Kiri: Analitik Finansial AI (Kalkulator ROI) --}}
+                    <div class="finance-card p-5 md:p-6 border-l-4 transition-colors duration-500" id="ai-card-border" style="border-left-color: #cbd5e1;">
+                        <div class="flex gap-4 items-start">
+                            <div class="p-3.5 rounded-2xl shrink-0 transition-colors duration-500" id="ai-icon-bg" style="background: #f1f5f9; color: #64748b;">
+                                <i data-lucide="bot" size="26"></i>
+                            </div>
+                            <div class="w-full">
+                                <span class="text-[10px] font-black uppercase tracking-widest block mb-1 transition-colors duration-500" style="color: #64748b;" id="ai-title">Kalkulator ROI AI</span>
+                                
+                                <div id="ai-loading" class="animate-pulse text-xs text-slate-400 font-medium mt-1">
+                                    Mengekstrak data laba rugi...
+                                </div>
+                                
+                                <div id="ai-content" class="hidden space-y-2">
+                                    <div class="flex items-center gap-2">
+                                        <span id="ai-badge" class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-md">STATUS</span>
+                                        <span id="ai-roi" class="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">ROI: 0%</span>
+                                    </div>
+                                    <p class="text-xs md:text-sm font-semibold text-slate-700 leading-relaxed" id="ai-message"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Kotak Kanan: Proyeksi Hasil Panen & Pendapatan --}}
+                    <div class="finance-card p-5 md:p-6 border-l-4 border-l-slate-300" id="yield-card-border">
+                        <div class="flex gap-4 items-start">
+                            <div class="p-3.5 rounded-2xl shrink-0 bg-slate-100 text-slate-500" id="yield-icon-bg">
+                                <i data-lucide="trending-up" size="26"></i>
+                            </div>
+                            <div class="w-full">
+                                <span class="text-[10px] font-black uppercase tracking-widest block mb-1 text-slate-400" id="yield-title">Proyeksi Hasil Panen AI</span>
+                                
+                                <div id="yield-loading" class="animate-pulse text-xs text-slate-400 font-medium mt-1">
+                                    Menganalisis matriks luas lahan...
+                                </div>
+                                
+                                <div id="yield-content" class="hidden space-y-2">
+                                    <div class="flex flex-wrap items-center gap-2">
+                                        <span id="yield-badge" class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200">ESTIMASI</span>
+                                        <span id="yield-range" class="text-[10px] font-black text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200">0 kg</span>
+                                    </div>
+                                    <p class="text-xs md:text-sm font-semibold text-slate-700 leading-relaxed" id="yield-message"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                @endif
+                {{-- ======================================================== --}}
+
+                {{-- Summary Laba Rugi --}}
+                <div class="finance-card p-5 md:p-6">
                     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
                         <div>
                             <span class="finance-pill bg-amber-100 text-amber-700">
                                 <i data-lucide="badge-dollar-sign" size="14"></i>
-                                Ringkasan Keuangan
+                                Akuntansi Aktual
                             </span>
 
                             <h2 class="text-2xl font-black text-slate-900 mt-3 font-serif">
@@ -272,56 +333,54 @@
                         </div>
 
                         @if($totalIncome <= 0)
-                            <span class="rounded-full bg-slate-100 px-4 py-2 text-sm font-black text-slate-600">
+                            <span class="rounded-full bg-slate-100 px-4 py-2 text-xs font-black text-slate-600 w-fit">
                                 Belum Panen
                             </span>
                         @elseif($netProfit >= 0)
-                            <span class="rounded-full bg-emerald-50 px-4 py-2 text-sm font-black text-emerald-700">
+                            <span class="rounded-full bg-emerald-50 px-4 py-2 text-xs font-black text-emerald-700 w-fit">
                                 Untung
                             </span>
                         @else
-                            <span class="rounded-full bg-red-50 px-4 py-2 text-sm font-black text-red-700">
+                            <span class="rounded-full bg-red-50 px-4 py-2 text-xs font-black text-red-700 w-fit">
                                 Rugi
                             </span>
                         @endif
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         <div class="summary-box">
                             <p class="text-xs font-black uppercase tracking-wide text-slate-400">Anggaran Awal</p>
-                            <p class="text-2xl font-black text-slate-900 mt-2">
+                            <p class="text-xl md:text-2xl font-black text-slate-900 mt-2">
                                 Rp {{ number_format($budget, 0, ',', '.') }}
                             </p>
                         </div>
 
                         <div class="summary-box">
                             <p class="text-xs font-black uppercase tracking-wide text-slate-400">Pengeluaran Aktual</p>
-                            <p class="text-2xl font-black text-red-600 mt-2">
+                            <p class="text-xl md:text-2xl font-black text-red-600 mt-2">
                                 Rp {{ number_format($totalExpense, 0, ',', '.') }}
                             </p>
                         </div>
 
                         <div class="summary-box">
                             <p class="text-xs font-black uppercase tracking-wide text-slate-400">Pendapatan Panen</p>
-                            <p class="text-2xl font-black text-emerald-600 mt-2">
+                            <p class="text-xl md:text-2xl font-black text-emerald-600 mt-2">
                                 Rp {{ number_format($totalIncome, 0, ',', '.') }}
                             </p>
                         </div>
 
                         <div class="summary-box">
                             <p class="text-xs font-black uppercase tracking-wide text-slate-400">Keuntungan / Rugi</p>
-                            <p class="text-2xl font-black {{ $netProfit >= 0 ? 'text-emerald-700' : 'text-red-700' }} mt-2">
+                            <p class="text-xl md:text-2xl font-black {{ $netProfit >= 0 ? 'text-emerald-700' : 'text-red-700' }} mt-2">
                                 Rp {{ number_format($netProfit, 0, ',', '.') }}
                             </p>
                         </div>
                     </div>
 
-                    <div class="mt-6 rounded-2xl bg-slate-50 border border-slate-100 p-5">
-                        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-3">
+                    <div class="mt-6 rounded-2xl bg-slate-50 border border-slate-100 p-4 md:p-5">
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
                             <div>
-                                <p class="text-xs font-black uppercase tracking-wide text-slate-500">
-                                    Realisasi Anggaran
-                                </p>
+                                <p class="text-xs font-black uppercase tracking-wide text-slate-500">Realisasi Anggaran</p>
                                 <p class="text-sm text-slate-500">
                                     Sisa anggaran:
                                     <span class="font-black {{ $remainingBudget >= 0 ? 'text-emerald-700' : 'text-red-700' }}">
@@ -343,8 +402,8 @@
                 </div>
 
                 {{-- Category Breakdown --}}
-                <div class="finance-card p-6">
-                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-5">
+                <div class="finance-card p-5 md:p-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
                         <div>
                             <span class="finance-pill bg-red-100 text-red-700">
                                 <i data-lucide="chart-bar" size="14"></i>
@@ -356,7 +415,7 @@
                             </h2>
                         </div>
 
-                        <span class="rounded-full bg-red-50 px-4 py-2 text-sm font-black text-red-700">
+                        <span class="rounded-full bg-red-50 px-4 py-2 text-xs font-black text-red-700 w-fit">
                             Total: Rp {{ number_format($totalExpense, 0, ',', '.') }}
                         </span>
                     </div>
@@ -375,11 +434,11 @@
                                 <div class="rounded-2xl border border-slate-200 bg-white p-4">
                                     <div class="flex items-center justify-between gap-3 mb-2">
                                         <div>
-                                            <p class="font-black text-slate-900">{{ $category['label'] }}</p>
+                                            <p class="font-black text-slate-900 text-sm md:text-base">{{ $category['label'] }}</p>
                                             <p class="text-xs text-slate-500">{{ $category['count'] }} item</p>
                                         </div>
 
-                                        <p class="font-black text-slate-900">
+                                        <p class="font-black text-slate-900 text-sm md:text-base">
                                             Rp {{ number_format($category['total'], 0, ',', '.') }}
                                         </p>
                                     </div>
@@ -395,7 +454,7 @@
 
                 {{-- Harvest Input --}}
                 @if($selectedPlan)
-                    <div class="finance-card p-6">
+                    <div class="finance-card p-5 md:p-6">
                         <div class="mb-6">
                             <span class="finance-pill bg-emerald-100 text-emerald-700">
                                 <i data-lucide="wheat" size="14"></i>
@@ -406,7 +465,7 @@
                                 Input Pendapatan Panen
                             </h2>
 
-                            <p class="text-sm text-slate-500 mt-1">
+                            <p class="text-xs md:text-sm text-slate-500 mt-1">
                                 Masukkan hasil panen agar sistem bisa menghitung laba atau rugi.
                             </p>
                         </div>
@@ -416,7 +475,7 @@
 
                             <input type="hidden" name="pre_production_plan_id" value="{{ $selectedPlan->id }}">
 
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label class="finance-label">
                                         <i data-lucide="calendar" size="14" class="text-emerald-600"></i>
@@ -436,7 +495,7 @@
                                         Satuan
                                     </label>
 
-                                    <select name="unit" class="finance-input" required>
+                                    <select name="unit" class="finance-input font-bold text-slate-800" required>
                                         <option value="kg">Kilogram (kg)</option>
                                         <option value="ton">Ton</option>
                                         <option value="karung">Karung</option>
@@ -488,7 +547,7 @@
                                           placeholder="Contoh: Panen pertama dijual ke pengepul."></textarea>
                             </div>
 
-                            <button type="submit" class="finance-btn">
+                            <button type="submit" class="finance-btn w-full sm:w-auto">
                                 <i data-lucide="save" size="18"></i>
                                 Simpan Data Panen
                             </button>
@@ -497,8 +556,8 @@
                 @endif
 
                 {{-- Harvest History --}}
-                <div class="finance-card p-6">
-                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-5">
+                <div class="finance-card p-5 md:p-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
                         <div>
                             <span class="finance-pill bg-emerald-100 text-emerald-700">
                                 <i data-lucide="receipt-text" size="14"></i>
@@ -510,7 +569,7 @@
                             </h2>
                         </div>
 
-                        <span class="rounded-full bg-emerald-50 px-4 py-2 text-sm font-black text-emerald-700">
+                        <span class="rounded-full bg-emerald-50 px-4 py-2 text-xs font-black text-emerald-700 w-fit">
                             Total: Rp {{ number_format($totalIncome, 0, ',', '.') }}
                         </span>
                     </div>
@@ -523,9 +582,9 @@
                         <div class="space-y-4">
                             @foreach($harvestReports as $harvest)
                                 <div class="rounded-2xl border border-slate-200 bg-white p-4">
-                                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                                         <div>
-                                            <h3 class="font-black text-slate-900">
+                                            <h3 class="font-black text-slate-900 text-sm md:text-base">
                                                 Panen {{ $harvest->quantity }} {{ $harvest->unit }}
                                             </h3>
 
@@ -541,7 +600,7 @@
                                     </div>
 
                                     @if($harvest->notes)
-                                        <p class="text-sm text-slate-600 mt-3">
+                                        <p class="text-xs md:text-sm text-slate-600 mt-3 border-t border-slate-100 pt-2">
                                             <strong>Catatan:</strong> {{ $harvest->notes }}
                                         </p>
                                     @endif
@@ -552,7 +611,7 @@
                 </div>
 
                 {{-- Recommendations --}}
-                <div class="finance-card p-6">
+                <div class="finance-card p-5 md:p-6">
                     <div class="mb-5">
                         <span class="finance-pill bg-blue-100 text-blue-700">
                             <i data-lucide="lightbulb" size="14"></i>
@@ -566,7 +625,7 @@
 
                     <div class="space-y-3">
                         @foreach($recommendations as $recommendation)
-                            <div class="rounded-2xl bg-blue-50 border border-blue-100 p-4 text-blue-800 text-sm leading-relaxed">
+                            <div class="rounded-2xl bg-blue-50 border border-blue-100 p-4 text-blue-800 text-xs md:text-sm leading-relaxed">
                                 {{ $recommendation }}
                             </div>
                         @endforeach
@@ -585,6 +644,91 @@
         if (window.lucide) {
             lucide.createIcons();
         }
+
+        @if($selectedPlan)
+            const lahanId = {{ $selectedPlan->lahan_id }};
+            
+            // ==========================================
+            // 1. AJAX FETCH API 2: ANALITIK FINANSIAL AI
+            // ==========================================
+            fetch('{{ route("laporan-keuangan.analysis") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ lahan_id: lahanId })
+            })
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('ai-loading').classList.add('hidden');
+                document.getElementById('ai-content').classList.remove('hidden');
+
+                const colorMap = {
+                    'emerald': { border: '#10b981', bg: '#d1fae5', text: '#047857', icon: '#059669' },
+                    'red':     { border: '#ef4444', bg: '#fee2e2', text: '#b91c1c', icon: '#dc2626' },
+                    'amber':   { border: '#f59e0b', bg: '#fef3c7', text: '#b45309', icon: '#d97706' },
+                };
+
+                const colors = colorMap[data.analysis.color] || colorMap['emerald'];
+
+                document.getElementById('ai-card-border').style.borderLeftColor = colors.border;
+                document.getElementById('ai-icon-bg').style.background = colors.bg;
+                document.getElementById('ai-icon-bg').style.color = colors.icon;
+                document.getElementById('ai-title').style.color = colors.text;
+
+                const badge = document.getElementById('ai-badge');
+                badge.textContent = data.analysis.status.toUpperCase();
+                badge.style.background = colors.bg;
+                badge.style.color = colors.text;
+                badge.style.border = `1px solid ${colors.border}`;
+
+                document.getElementById('ai-roi').textContent = `ROI: ${data.roi_percentage}%`;
+                document.getElementById('ai-message').textContent = data.analysis.message;
+            })
+            .catch(err => {
+                console.error("Gagal ambil API Finansial AI:", err);
+                document.getElementById('ai-loading').textContent = "Gagal memproses kalkulasi finansial otomatis.";
+            });
+
+            // ==========================================
+            // 2. AJAX FETCH API 4: YIELD PREDICTION AI
+            // ==========================================
+            fetch('{{ route("pre-production.yield-prediction") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ plan_id: lahanId }) // Melempar lahanId sesuai kebutuhan controller
+            })
+            .then(res => res.json())
+            .then(yieldData => {
+                if(yieldData.status === 'success') {
+                    document.getElementById('yield-loading').classList.add('hidden');
+                    document.getElementById('yield-content').classList.remove('hidden');
+
+                    // Set Style Premium Hijau
+                    document.getElementById('yield-card-border').style.borderLeftColor = '#10b981';
+                    document.getElementById('yield-icon-bg').style.background = '#d1fae5';
+                    document.getElementById('yield-icon-bg').style.color = '#059669';
+                    document.getElementById('yield-title').style.color = '#047857';
+
+                    // Inject Data ke DOM
+                    document.getElementById('yield-range').textContent = `ESTIMASI: ${yieldData.yield.min} - ${yieldData.yield.max} ${yieldData.yield.unit}`;
+                    
+                    // Nasihat pendapatan
+                    document.getElementById('yield-message').innerHTML = `
+                        ${yieldData.message} <br>
+                        <span class="text-emerald-700 font-extrabold mt-1 inline-block">Potensi Omzet: ${yieldData.income.formatted_min} - ${yieldData.income.formatted_max}</span>
+                    `;
+                }
+            })
+            .catch(err => {
+                console.error("Gagal ambil API Yield Prediction:", err);
+                document.getElementById('yield-loading').textContent = "Gagal memproses prediksi hasil panen otomatis.";
+            });
+        @endif
     });
 </script>
 @endpush

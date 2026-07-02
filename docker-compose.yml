@@ -33,17 +33,18 @@ services:
     networks:
       - taniverse_mesh
 
-  # 3. TaniVerse Database Engine (PostgreSQL)
+ # 3. TaniVerse Database Engine (PostgreSQL)
   taniverse_db:
     image: postgres:16-alpine
     container_name: taniverse_postgres
     restart: unless-stopped
+    command: postgres -c fsync=off -c full_page_writes=off # <--- TAMBAHIN BARIS INI
     environment:
       POSTGRES_DB: ${DB_NAME:-taniverse_db}
       POSTGRES_USER: ${DB_USER:-djambred}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-p455w0rd1!.}
     ports:
-      - "5433:5432" # Diubah ke 5433 agar tidak bentrok dengan Postgres lokal kamu
+      - "5433:5432"
     volumes:
       - ./db/postgresql_data:/var/lib/postgresql/data
     healthcheck:

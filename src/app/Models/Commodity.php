@@ -16,12 +16,25 @@ class Commodity extends Model
     ];
 
     public function types()
-{
-    return $this->hasMany(\App\Models\CommodityType::class);
-}
+    {
+        return $this->hasMany(\App\Models\CommodityType::class);
+    }
 
     public function soilTypes()
     {
         return $this->belongsToMany(SoilType::class, 'commodity_soil_type');
+    }
+
+    /**
+     * Relasi untuk mendapatkan daftar komoditas yang direkomendasikan sebagai rotasi.
+     */
+    public function recommendedRotations()
+    {
+        return $this->belongsToMany(
+            Commodity::class, 
+            'commodity_recommendations', 
+            'commodity_id', 
+            'recommended_id'
+        )->withPivot('reason');
     }
 }

@@ -470,6 +470,7 @@
                                                            name="tasks[{{ $task->id }}]"
                                                            value="1"
                                                            class="task-check mt-1"
+                                                           data-task-id="{{ $task->id }}"
                                                            {{ $isDone ? 'checked' : '' }}>
 
                                                     <div class="flex-1">
@@ -826,6 +827,41 @@
         if (window.lucide) {
             lucide.createIcons();
         }
+
+        @if($selectedPlan)
+            // --- FITUR AUTO-SAVE AJAX CHECKBOX ---
+            document.querySelectorAll('.task-check').forEach(function(checkbox) {
+                checkbox.addEventListener('change', function() {
+                    const taskId = this.getAttribute('data-task-id');
+                    const isDone = this.checked ? 1 : 0;
+
+                    fetch('/pelaksanaan/toggle-task', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            plan_id: {{ $selectedPlan->id }},
+                            task_id: taskId,
+                            day_number: {{ $selectedPlan->current_day }},
+                            is_done: isDone
+                        })
+                    }).then(res => {
+                        if(!res.ok) throw new Error('Network error');
+                        return res.json();
+                    }).then(data => {
+                        console.log('Task auto-saved');
+                    }).catch(err => {
+                        console.error('Auto-save failed', err);
+                        // Kembalikan ke state awal jika gagal
+                        this.checked = !this.checked;
+                        alert('Gagal menyimpan otomatis, silakan periksa koneksi.');
+                    });
+                });
+            });
+        @endif
 
         const reportRadios = document.querySelectorAll('.report-type-radio');
         const hamaField = document.getElementById('hama_field');
