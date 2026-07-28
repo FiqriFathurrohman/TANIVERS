@@ -219,9 +219,25 @@ Route::post('/laporan-keuangan/financial-analysis', [LaporanKeuanganController::
 | Profil & Pengaturan Akun
 |--------------------------------------------------------------------------
 */
-Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
-Route::post('/profile/photo', [ProfileController::class, 'updatePhoto'])->name('profile.photo.update');
+Route::middleware('auth')
+    ->prefix('profile')
+    ->name('profile.')
+    ->group(function () {
+        Route::get('/', [ProfileController::class, 'index'])
+            ->name('index');
 
+        Route::patch('/', [ProfileController::class, 'update'])
+            ->name('update');
+
+        Route::post('/photo', [ProfileController::class, 'updatePhoto'])
+            ->name('photo.update');
+
+        Route::put('/password', [ProfileController::class, 'updatePassword'])
+            ->name('password.update');
+
+        Route::post('/logout-other-devices', [ProfileController::class, 'logoutOtherDevices'])
+            ->name('logout-other-devices');
+    });
 /*
 |--------------------------------------------------------------------------
 | API Wilayah Lokal

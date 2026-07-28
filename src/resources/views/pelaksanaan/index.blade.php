@@ -63,6 +63,31 @@
         box-shadow: 0 8px 24px rgba(15, 110, 63, 0.3);
     }
 
+    .history-btn {
+        background: #ffffff;
+        color: #064E3B;
+        border: 1px solid #dbe7e1;
+        border-radius: 0.85rem;
+        padding: 0.7rem 1rem;
+        font-size: 0.82rem;
+        font-weight: 800;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        box-shadow: 0 2px 8px rgba(15, 110, 63, 0.06);
+        transition: all 0.2s ease;
+        white-space: nowrap;
+    }
+
+    .history-btn:hover {
+        color: #ffffff;
+        background: #064E3B;
+        border-color: #064E3B;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(6, 78, 59, 0.18);
+    }
+
     .danger-btn {
         background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
         color: white;
@@ -240,9 +265,18 @@
             </p>
         </div>
 
-        <div class="flex items-center gap-2 bg-white px-4 py-2 rounded-xl shadow-sm border border-slate-100 text-sm font-medium text-slate-600">
-            <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-            To Do List Aktif
+        <div class="flex flex-wrap items-center gap-3">
+            <a href="{{ route('riwayat-laporan.index') }}"
+               class="history-btn"
+               title="Buka Riwayat Laporan">
+                <i data-lucide="history" size="17"></i>
+                Riwayat Laporan
+            </a>
+
+            <div class="flex items-center gap-2 bg-white px-4 py-2 rounded-xl shadow-sm border border-slate-100 text-sm font-medium text-slate-600">
+                <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                To Do List Aktif
+            </div>
         </div>
     </div>
 

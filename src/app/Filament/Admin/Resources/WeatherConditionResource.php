@@ -75,12 +75,28 @@ public static function table(Table $table): Table
             ]),
         ]);
 }
-    public static function getRelations(): array
+    public static function canViewAny(): bool
     {
-        return [
-            //
-        ];
+        return true;
     }
+
+    // --- TAMBAHKAN KODE INI DI BAWAHNYA ---
+
+    public static function canCreate(): bool
+    {
+        return true; // Menampilkan tombol "New Hama" / "+ Tambah" dan form inputnya
+    }
+
+    public static function canEdit(\Illuminate\Database\Eloquent\Model $record): bool
+    {
+        return true; // Menampilkan tombol edit dan mengizinkan akses ke form edit
+    }
+
+    public static function canDelete(\Illuminate\Database\Eloquent\Model $record): bool
+    {
+        return true; // Menampilkan tombol hapus data
+    }
+
 
     public static function getPages(): array
     {

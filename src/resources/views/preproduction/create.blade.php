@@ -1,123 +1,409 @@
 @extends('layouts.app') 
 @section('title', 'Pra Production - Tanivers') 
 
-@push('styles') 
-<style> 
-    /* Hilangkan font jadul, pakai Plus Jakarta Sans dari layout utama */
-
-    /* Premium Input Glass */
-    .pp-input { 
-        width: 100%; 
-        background: rgba(255, 255, 255, 0.5); 
-        backdrop-filter: blur(8px);
-        border: 1px solid rgba(255,255,255,0.8); 
-        border-radius: 1.25rem; 
-        padding: 0.875rem 1.25rem; 
-        font-size: 0.9rem; 
-        font-weight: 700;
-        color: #1e293b; 
-        transition: all 0.3s ease; 
-        box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
-    } 
-    .pp-input:focus { 
-        border-color: #10b981; 
-        box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15); 
-        outline: none; 
-        background: rgba(255, 255, 255, 0.85); 
-    } 
-    .pp-input:disabled { 
-        background: rgba(241, 245, 249, 0.6); 
-        color: #94a3b8; 
-        cursor: not-allowed; 
-        border-color: rgba(255,255,255,0.4);
-    } 
-    
-    .pp-label { 
-        display: flex; 
-        align-items: center; 
-        gap: 0.4rem; 
-        font-size: 0.65rem; 
-        font-weight: 900; 
-        text-transform: uppercase; 
-        letter-spacing: 0.1em; 
-        color: #64748b; 
-        margin-bottom: 0.5rem; 
-    } 
-    
-    .pp-select { 
-        appearance: none; 
-        padding-right: 3rem; 
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%230F6E3F' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); 
-        background-repeat: no-repeat; 
-        background-position: right 1.25rem center; 
-        cursor: pointer;
-    } 
-    
-    /* Modern Radio Button Card */
-    .pp-radio-card { 
-        border: 1.5px solid rgba(255,255,255,0.7); 
-        border-radius: 1.25rem; 
-        padding: 1rem; 
-        background: rgba(255,255,255,0.4); 
-        backdrop-filter: blur(8px);
-        cursor: pointer; 
-        transition: all 0.3s ease; 
-        position: relative;
-        overflow: hidden;
-    } 
-    .pp-radio-card:hover { 
-        border-color: #34D399; 
-        background: rgba(255,255,255,0.7); 
-    } 
-    /* Checked State via peer/CSS */
-    input[type="radio"]:checked + .radio-content {
-        background: rgba(236, 253, 245, 0.8);
-        border-color: #10b981;
+@push('styles')
+<style>
+    :root {
+        --pp-green: #00b875;
+        --pp-green-dark: #003522;
+        --pp-green-deep: #002719;
+        --pp-green-soft: #e4f5ec;
+        --pp-green-panel: #d6efdf;
+        --pp-page: #f3f6f8;
+        --pp-card: #ffffff;
+        --pp-border: #dde5ea;
+        --pp-text: #071426;
+        --pp-muted: #718096;
+        --pp-subtle: #f7f9fa;
     }
-</style> 
+
+    /* Menyamakan halaman dengan dashboard Tanivers: solid, bersih, tanpa glass effect. */
+    .pp-background-image,
+    .pp-background-overlay,
+    .pp-orb,
+    .pp-card-shine {
+        display: none !important;
+    }
+
+    .font-serif {
+        font-family: inherit !important;
+    }
+
+    .pp-page {
+        width: 100%;
+        max-width: 80rem;
+        margin-inline: auto;
+        padding-bottom: 2rem;
+    }
+
+    .pp-card {
+        position: relative;
+        background: var(--pp-card);
+        border: 1px solid var(--pp-border);
+        border-radius: 1.75rem;
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.045);
+    }
+
+    /* Header mengikuti header Dashboard: tidak dibungkus kartu besar. */
+    .pp-header {
+        background: transparent;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+        padding: 0.25rem 0 0.75rem !important;
+        overflow: visible;
+    }
+
+    .pp-header h1 {
+        color: var(--pp-text);
+        font-size: clamp(1.85rem, 3vw, 2.25rem);
+        line-height: 1.15;
+        letter-spacing: -0.045em;
+    }
+
+    .pp-header h1 span {
+        color: var(--pp-green) !important;
+        background: none !important;
+        -webkit-text-fill-color: currentColor !important;
+    }
+
+    .pp-header p {
+        color: var(--pp-muted);
+        font-size: 0.82rem;
+        font-weight: 600;
+    }
+
+    .pp-section-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0;
+        margin-bottom: 0.7rem;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        color: #648072;
+        font-size: 0.62rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.13em;
+    }
+
+    .pp-section-badge svg {
+        color: var(--pp-green);
+    }
+
+    .pp-status {
+        min-height: 2.85rem;
+        padding: 0.75rem 1.15rem !important;
+        background: var(--pp-green-deep);
+        color: #ffffff;
+        border: 1px solid rgba(0, 53, 34, 0.9);
+        border-radius: 0.9rem;
+        box-shadow: 0 8px 20px rgba(0, 39, 25, 0.14);
+        font-size: 0.75rem;
+        font-weight: 800;
+    }
+
+    .pp-status > div {
+        background: #b9ff00 !important;
+        box-shadow: 0 0 0 4px rgba(185, 255, 0, 0.12) !important;
+    }
+
+    .pp-panel-title {
+        color: var(--pp-text);
+        font-size: 1.05rem;
+        font-weight: 800;
+        letter-spacing: -0.025em;
+    }
+
+    .pp-panel-copy {
+        color: var(--pp-muted);
+        font-size: 0.72rem;
+        font-weight: 600;
+        line-height: 1.6;
+    }
+
+    .pp-input {
+        width: 100%;
+        min-height: 3.25rem;
+        padding: 0.85rem 1rem;
+        background: var(--pp-subtle);
+        border: 1px solid var(--pp-border);
+        border-radius: 0.9rem;
+        color: var(--pp-text);
+        font-size: 0.82rem;
+        font-weight: 650;
+        outline: none;
+        box-shadow: none;
+        transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    textarea.pp-input {
+        min-height: 6.75rem;
+        line-height: 1.6;
+    }
+
+    .pp-input:hover:not(:disabled) {
+        background: #ffffff;
+        border-color: #cbd6dc;
+    }
+
+    .pp-input:focus {
+        background: #ffffff;
+        border-color: var(--pp-green);
+        box-shadow: 0 0 0 4px rgba(0, 184, 117, 0.11);
+    }
+
+    .pp-input:disabled,
+    .pp-input[readonly] {
+        background: #edf1f3;
+        border-color: #e2e8ec;
+        color: #98a5af;
+        cursor: not-allowed;
+    }
+
+    .pp-input::placeholder {
+        color: #9aa7b1;
+        font-weight: 550;
+    }
+
+    .pp-label {
+        display: flex;
+        align-items: center;
+        gap: 0.42rem;
+        margin-bottom: 0.5rem;
+        color: #52636e;
+        font-size: 0.62rem;
+        font-weight: 850;
+        text-transform: uppercase;
+        letter-spacing: 0.105em;
+    }
+
+    .pp-label svg {
+        color: var(--pp-green) !important;
+    }
+
+    .pp-select {
+        appearance: none;
+        padding-right: 2.8rem;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23718096' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        cursor: pointer;
+    }
+
+    .pp-choice-card {
+        height: 100%;
+        min-height: 5.4rem;
+        padding: 1rem;
+        background: var(--pp-subtle);
+        border: 1px solid var(--pp-border);
+        border-radius: 1rem;
+        transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+    }
+
+    .pp-choice-card:hover {
+        background: #ffffff;
+        border-color: #b9d8ca;
+        transform: translateY(-1px);
+    }
+
+    input[type="radio"]:checked + .radio-content {
+        background: var(--pp-green-soft);
+        border-color: var(--pp-green);
+        box-shadow: inset 0 0 0 1px var(--pp-green);
+    }
+
+    input[type="radio"]:checked + .radio-content p:first-child {
+        color: var(--pp-green-dark);
+    }
+
+    .pp-info-panel {
+        padding: 1.1rem;
+        background: var(--pp-green-soft);
+        border: 1px solid #c5e8d5;
+        border-radius: 1rem;
+        color: var(--pp-green-dark);
+        box-shadow: none;
+    }
+
+    .pp-empty-state {
+        min-height: 12rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: #f7f9fa;
+        border: 1px dashed #d4dde2;
+        border-radius: 1.15rem;
+        box-shadow: none;
+    }
+
+    .pp-task-item,
+    .pp-phase-item {
+        background: #ffffff;
+        border: 1px solid var(--pp-border);
+        border-radius: 1rem;
+        box-shadow: none;
+        transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+    }
+
+    .pp-task-item:hover,
+    .pp-phase-item:hover {
+        background: #f9fbfa;
+        border-color: #b9d8ca;
+        transform: translateY(-1px);
+    }
+
+    .pp-phase-item-active {
+        background: var(--pp-green-panel);
+        border-color: #aedbc1;
+        box-shadow: none;
+    }
+
+    .pp-submit-btn {
+        width: 100%;
+        min-height: 3.35rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.55rem;
+        padding: 0.9rem 1.2rem;
+        background: var(--pp-green-deep);
+        color: #ffffff;
+        border: 1px solid var(--pp-green-deep);
+        border-radius: 0.95rem;
+        font-size: 0.78rem;
+        font-weight: 850;
+        box-shadow: 0 8px 18px rgba(0, 39, 25, 0.13);
+        cursor: pointer;
+        transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .pp-submit-btn:hover {
+        background: #00462d;
+        transform: translateY(-1px);
+        box-shadow: 0 10px 22px rgba(0, 39, 25, 0.18);
+    }
+
+    .pp-helper {
+        margin-top: 0.5rem;
+        padding: 0.65rem 0.75rem;
+        background: #f7f9fa;
+        border: 1px solid var(--pp-border);
+        border-radius: 0.75rem;
+        color: var(--pp-muted);
+        font-size: 0.66rem;
+        font-weight: 600;
+        line-height: 1.5;
+    }
+
+    .pp-preview-heading {
+        padding-bottom: 1.15rem;
+        border-bottom: 1px solid #e7ecef !important;
+    }
+
+    .pp-preview-icon {
+        background: var(--pp-green-soft) !important;
+        color: var(--pp-green) !important;
+        border: 1px solid #c7ead7 !important;
+        border-radius: 0.9rem !important;
+        box-shadow: none !important;
+    }
+
+    .pp-divider {
+        border-color: #e4eaee !important;
+    }
+
+    .pp-success-alert,
+    .pp-error-alert {
+        border-radius: 1rem;
+        box-shadow: none;
+    }
+
+    .pp-success-alert {
+        background: var(--pp-green-soft);
+        border: 1px solid #c5e8d5;
+        color: #075f3d;
+    }
+
+    .pp-error-alert {
+        background: #fff1f1;
+        border: 1px solid #ffd2d2;
+        color: #9b2525;
+    }
+
+    #fertility_impact_box {
+        box-shadow: none !important;
+    }
+
+    #fertility_progress_bar {
+        background-color: var(--pp-green) !important;
+    }
+
+    @keyframes shimmer {
+        100% { transform: translateX(100%); }
+    }
+
+    @media (max-width: 767px) {
+        .pp-card {
+            border-radius: 1.25rem;
+        }
+
+        .pp-header {
+            padding-top: 0 !important;
+        }
+
+        .pp-status {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
 @endpush 
 
 @section('content') 
 <!-- Background Custom bg.png -->
-<div class="fixed inset-0 -z-30 pointer-events-none bg-cover bg-center bg-no-repeat" style="background-image: url('{{ asset('images/bg.png') }}');"></div>
+<div class="pp-background-image fixed inset-0 -z-30 pointer-events-none bg-cover bg-center bg-no-repeat" style="background-image: url('{{ asset('images/bg.png') }}');"></div>
 <!-- Overlay transparan super tipis -->
-<div class="fixed inset-0 bg-emerald-50/10 -z-20 pointer-events-none backdrop-blur-[2px]"></div>
+<div class="pp-background-overlay fixed inset-0 -z-20 pointer-events-none"></div>
 
 <!-- Ambient Orbs -->
-<div class="fixed top-20 right-10 w-96 h-96 bg-emerald-400/20 rounded-full blur-[100px] pointer-events-none -z-10 animate-pulse"></div> 
-<div class="fixed bottom-10 left-10 w-72 h-72 bg-teal-400/20 rounded-full blur-[80px] pointer-events-none -z-10"></div> 
+<div class="pp-orb fixed top-20 right-10 w-96 h-96 bg-emerald-300/20 rounded-full blur-[100px] pointer-events-none -z-10 animate-pulse"></div> 
+<div class="pp-orb fixed bottom-10 left-10 w-72 h-72 bg-emerald-200/20 rounded-full blur-[80px] pointer-events-none -z-10"></div> 
 
-<div class="relative w-full max-w-7xl mx-auto space-y-8 z-10"> 
+<div class="pp-page relative space-y-7 z-10"> 
     
     {{-- HEADER SECTION (GLASS) --}} 
-    <div class="relative overflow-hidden rounded-[2rem] bg-white/40 backdrop-blur-2xl border border-white/60 shadow-[0_8px_30px_-12px_rgba(15,110,63,0.1)] p-6 md:p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6"> 
-        <div class="absolute inset-0 bg-gradient-to-br from-white/70 via-transparent to-transparent pointer-events-none"></div>
+    <div class="pp-card pp-header relative overflow-hidden p-6 md:p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6"> 
+        <div class="pp-card-shine absolute inset-0 pointer-events-none"></div>
         <div class="relative z-10"> 
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-xl bg-emerald-100/80 backdrop-blur-sm text-emerald-700 text-[10px] font-black uppercase tracking-widest border border-emerald-200 shadow-sm mb-2"> 
+            <div class="pp-section-badge mb-2"> 
                 <i data-lucide="calendar-days" size="14"></i> Pra Production 
             </div> 
-            <h1 class="text-3xl md:text-4xl font-black text-slate-800 tracking-tighter drop-shadow-sm"> 
+            <h1 class="text-3xl md:text-4xl font-black text-slate-900 tracking-tight font-serif"> 
                 Pra Production <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-500">& Perancangan</span> 
             </h1> 
             <p class="text-sm font-bold text-slate-500 mt-2 flex items-center gap-2"> 
                 <i data-lucide="clipboard-list" size="18" class="text-emerald-600"></i> Rancang masa tanam, pilih komoditas, cek fase, tugas, dan anggaran awal. 
             </p> 
         </div> 
-        <div class="relative z-10 bg-white/60 backdrop-blur-md px-6 py-3.5 rounded-2xl border border-white shadow-sm text-sm font-black text-slate-700 flex items-center gap-2.5 hover:scale-105 transition-transform cursor-default"> 
+        <div class="pp-status relative z-10 px-5 py-3 text-sm font-bold text-slate-600 flex items-center gap-2.5 cursor-default"> 
             <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.6)]"></div> Perancangan Aktif 
         </div> 
     </div> 
 
     {{-- ALERTS --}} 
     @if(session('success')) 
-    <div class="flex items-center gap-3 p-4 rounded-2xl bg-emerald-100/80 backdrop-blur-md text-emerald-800 border border-emerald-200 shadow-sm relative z-10"> 
+    <div class="pp-success-alert flex items-center gap-3 p-4 rounded-2xl shadow-sm relative z-10"> 
         <div class="p-2 bg-emerald-200/50 rounded-full text-emerald-600"> <i data-lucide="check-circle-2" size="20"></i> </div> 
         <span class="text-sm font-bold tracking-tight">{{ session('success') }}</span> 
     </div> 
     @endif 
     
     @if($errors->any()) 
-    <div class="flex items-start gap-3 p-5 rounded-2xl bg-red-100/80 backdrop-blur-md text-red-800 border border-red-200 shadow-sm relative z-10"> 
+    <div class="pp-error-alert flex items-start gap-3 p-5 rounded-2xl shadow-sm relative z-10"> 
         <div class="p-2 bg-red-200/50 rounded-full text-red-600 shrink-0"> <i data-lucide="alert-triangle" size="20"></i> </div> 
         <div class="text-sm"> 
             <p class="mb-1 font-black tracking-tight">Terdapat kesalahan:</p> 
@@ -134,12 +420,12 @@
             
             {{-- FORM PANEL (KIRI) --}} 
             <div class="xl:col-span-5"> 
-                <div class="relative overflow-hidden rounded-[2.5rem] bg-white/40 backdrop-blur-2xl border border-white/60 shadow-[0_8px_40px_-12px_rgba(15,110,63,0.1)] p-6 md:p-8"> 
-                    <div class="absolute inset-0 bg-gradient-to-br from-white/60 via-transparent to-transparent pointer-events-none"></div>
+                <div class="pp-card relative overflow-hidden p-5 md:p-7"> 
+                    <div class="pp-card-shine absolute inset-0 pointer-events-none"></div>
                     
                     <div class="relative z-10 mb-6"> 
-                        <h2 class="text-xl font-black text-slate-800 tracking-tighter mb-1"> Form Perancangan </h2> 
-                        <p class="text-xs font-bold text-slate-500"> Pilih lahan, komoditas, status tanam, dan anggaran. </p> 
+                        <h2 class="pp-panel-title mb-1">Form Perancangan</h2> 
+                        <p class="pp-panel-copy">Pilih lahan, komoditas, status tanam, dan anggaran.</p> 
                     </div> 
                     
                     <div class="relative z-10 space-y-5"> 
@@ -177,7 +463,7 @@
                         
                         {{-- Duration Info --}} 
                         <div id="duration_box" class="hidden"> 
-                            <div class="flex items-center gap-3 bg-white/60 backdrop-blur-md border border-white p-4 rounded-2xl shadow-sm"> 
+                            <div class="pp-info-panel flex items-center gap-3 p-4"> 
                                 <div class="p-2.5 bg-emerald-100 rounded-xl text-emerald-700 border border-emerald-200"> 
                                     <i data-lucide="timer" size="24"></i> 
                                 </div> 
@@ -196,14 +482,14 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2"> 
                                 <label class="relative block cursor-pointer group"> 
                                     <input type="radio" name="planting_status" value="new" checked class="peer sr-only"> 
-                                    <div class="radio-content h-full p-4 rounded-2xl bg-white/40 border border-white/80 backdrop-blur-sm transition-all peer-checked:bg-emerald-50/90 peer-checked:border-emerald-500 peer-checked:shadow-md group-hover:bg-white/70"> 
+                                    <div class="radio-content pp-choice-card"> 
                                         <p class="font-black text-slate-800 flex items-center gap-2"> <i data-lucide="leaf" size="16" class="text-emerald-600"></i> Baru </p> 
                                         <p class="text-[11px] font-bold text-slate-500 mt-1 leading-relaxed"> Mulai dari awal tanam (otomatis hari ke-1). </p> 
                                     </div> 
                                 </label> 
                                 <label class="relative block cursor-pointer group"> 
                                     <input type="radio" name="planting_status" value="already_planted" class="peer sr-only"> 
-                                    <div class="radio-content h-full p-4 rounded-2xl bg-white/40 border border-white/80 backdrop-blur-sm transition-all peer-checked:bg-emerald-50/90 peer-checked:border-emerald-500 peer-checked:shadow-md group-hover:bg-white/70"> 
+                                    <div class="radio-content pp-choice-card"> 
                                         <p class="font-black text-slate-800 flex items-center gap-2"> <i data-lucide="fast-forward" size="16" class="text-emerald-600"></i> Lanjutan </p> 
                                         <p class="text-[11px] font-bold text-slate-500 mt-1 leading-relaxed"> Sudah berjalan. Isi hari keberapa saat ini. </p> 
                                     </div> 
@@ -215,7 +501,7 @@
                         <div id="current_day_group" class="hidden animate-in fade-in slide-in-from-top-2 duration-300"> 
                             <label class="pp-label"> <i data-lucide="calendar-clock" size="14" class="text-emerald-600"></i> Sudah Hari Keberapa? </label> 
                             <input type="number" name="current_day" id="current_day" min="1" value="1" class="pp-input" placeholder="Cth: 9"> 
-                            <p class="text-[10px] font-bold text-slate-500 mt-1.5 leading-relaxed bg-white/40 p-2 rounded-lg border border-white"> 
+                            <p class="pp-helper"> 
                                 💡 Jika sudah hari ke-9, isi 9. Sistem otomatis menyesuaikan fase & tugas. 
                             </p> 
                         </div> 
@@ -233,7 +519,7 @@
                         </div> 
                         
                         <div class="pt-2">
-                            <button type="submit" class="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-bold text-sm py-4 rounded-2xl shadow-[0_4px_15px_rgba(16,185,129,0.3)] hover:shadow-[0_8px_25px_rgba(16,185,129,0.4)] hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2"> 
+                            <button type="submit" class="pp-submit-btn"> 
                                 <i data-lucide="save" size="18"></i> Simpan Perancangan Tanam 
                             </button> 
                         </div>
@@ -243,22 +529,22 @@
             
             {{-- PREVIEW PANEL (KANAN) --}} 
             <div class="xl:col-span-7"> 
-                <div class="relative overflow-hidden rounded-[2.5rem] bg-white/40 backdrop-blur-2xl border border-white/60 shadow-[0_8px_40px_-12px_rgba(15,110,63,0.1)] p-6 md:p-8 h-full"> 
-                    <div class="absolute inset-0 bg-gradient-to-b from-white/50 via-transparent to-transparent pointer-events-none"></div>
+                <div class="pp-card relative overflow-hidden p-5 md:p-7 h-full"> 
+                    <div class="pp-card-shine absolute inset-0 pointer-events-none"></div>
                     
-                    <div class="relative z-10 mb-6 flex items-start gap-4 border-b border-white/50 pb-5"> 
-                        <div class="p-3 bg-emerald-100/80 rounded-2xl text-emerald-600 border border-emerald-200 shadow-sm shrink-0">
+                    <div class="pp-preview-heading relative z-10 mb-6 flex items-start gap-4 pb-5"> 
+                        <div class="pp-preview-icon p-3 shrink-0">
                             <i data-lucide="radar" size="24"></i>
                         </div>
                         <div>
-                            <h2 class="text-2xl font-black text-slate-800 tracking-tighter mb-1"> Monitor Fase & Tugas </h2> 
-                            <p class="text-xs font-bold text-slate-500"> Data di-generate otomatis oleh AI & Sistem Pakar berdasarkan pilihan di form kiri. </p> 
+                            <h2 class="pp-panel-title text-xl mb-1">Monitor Fase & Tugas</h2> 
+                            <p class="pp-panel-copy">Data di-generate otomatis oleh AI & Sistem Pakar berdasarkan pilihan di form kiri.</p> 
                         </div>
                     </div> 
                     
                     <div class="relative z-10">
                         <!-- State Kosong -->
-                        <div id="guide_empty" class="bg-white/50 backdrop-blur-sm border border-white rounded-3xl p-8 text-center shadow-inner"> 
+                        <div id="guide_empty" class="pp-empty-state p-8 text-center"> 
                             <i data-lucide="package-search" size="40" class="mx-auto text-slate-300 mb-3"></i>
                             <p class="text-slate-500 font-black tracking-tight text-sm">Pilih Komoditas & Jenisnya</p>
                             <p class="text-slate-400 font-bold text-[11px] mt-1">Sistem akan merakit jadwal pintar Anda di sini.</p>
@@ -288,7 +574,7 @@
                         
                         {{-- Fase Saat Ini --}}
                         <div id="current_phase_box" class="hidden mb-6"> 
-                            <div class="bg-gradient-to-br from-white/70 to-white/40 backdrop-blur-md border border-white p-5 rounded-3xl shadow-sm"> 
+                            <div class="pp-info-panel p-5"> 
                                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-100 text-emerald-700 text-[9px] font-black uppercase tracking-widest mb-3 border border-emerald-200"> 
                                     <i data-lucide="target" size="12"></i> Fase Saat Ini 
                                 </span> 
@@ -305,7 +591,7 @@
                         </div> 
                         
                         {{-- Semua Fase --}}
-                        <div id="all_phases_box" class="hidden border-t-2 border-dashed border-white/60 pt-6 mt-4"> 
+                        <div id="all_phases_box" class="pp-divider hidden border-t pt-6 mt-4"> 
                             <h3 class="font-black text-slate-800 mb-4 flex items-center gap-2 text-lg tracking-tight px-1"> 
                                 <i data-lucide="layers" size="20" class="text-emerald-600"></i> Peta Jalan Fase Tanam 
                             </h3> 
@@ -373,21 +659,21 @@ document.addEventListener('DOMContentLoaded', function () {
                     let colorClass = ""; let barColor = ""; 
                     
                     if (data.severity_level === 'warning') { 
-                        colorClass = "bg-amber-100/80 border-amber-200/60 backdrop-blur-md"; 
+                        colorClass = "bg-amber-50 border-amber-200"; 
                         barColor = "bg-amber-500"; 
                         fertilityPercent.className = "text-3xl font-black text-amber-600 tracking-tighter"; 
                     } else if (data.severity_level === 'danger') { 
-                        colorClass = "bg-orange-100/80 border-orange-200/60 backdrop-blur-md"; 
+                        colorClass = "bg-orange-50 border-orange-200"; 
                         barColor = "bg-orange-500"; 
                         fertilityPercent.className = "text-3xl font-black text-orange-600 tracking-tighter"; 
                     } else if (data.severity_level === 'fatal') { 
-                        colorClass = "bg-red-100/80 border-red-200/60 backdrop-blur-md"; 
+                        colorClass = "bg-red-50 border-red-200"; 
                         barColor = "bg-red-500"; 
                         fertilityPercent.className = "text-3xl font-black text-red-600 tracking-tighter"; 
                     } 
                     
-                    fertilityBox.className = `p-5 rounded-[2rem] border shadow-sm transition-all duration-500 mb-6 ${colorClass}`; 
-                    fertilityIconBox.className = `p-3 rounded-2xl shrink-0 ${barColor} text-white shadow-md`; 
+                    fertilityBox.className = `p-5 rounded-[1.25rem] border shadow-sm transition-all duration-500 mb-6 ${colorClass}`; 
+                    fertilityIconBox.className = `p-3 rounded-xl shrink-0 ${barColor} text-white shadow-sm`; 
                     fertilityTitle.textContent = data.fertility_title; 
                     fertilityPercent.textContent = `${efficiency}%`; 
                     fertilityBar.style.width = `${efficiency}%`; 
@@ -417,7 +703,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     }); 
                 } else { 
                     // AMAN (Glassy Emerald)
-                    fertilityBox.className = "p-5 rounded-[2rem] border shadow-sm transition-all duration-500 mb-6 bg-emerald-100/70 border-emerald-200/60 backdrop-blur-md"; 
+                    fertilityBox.className = "pp-info-panel p-5 transition-all duration-500 mb-6"; 
                     fertilityIconBox.className = "p-3 rounded-2xl shrink-0 bg-emerald-500 text-white shadow-md"; 
                     fertilityTitle.textContent = "Tanah Optimal & Subur"; 
                     fertilityPercent.textContent = "100%"; 
@@ -527,7 +813,7 @@ document.addEventListener('DOMContentLoaded', function () {
         
         if (currentDay > activeGuide.duration_days) { 
             currentPhaseText.innerHTML = `Hari tanam tidak boleh melebihi total masa tanam <strong class="text-red-500">${activeGuide.duration_days} hari</strong>.`; 
-            todayTasksList.innerHTML = `<li class="p-4 rounded-2xl bg-red-100/80 backdrop-blur-sm text-red-700 border border-red-200 font-bold text-sm shadow-sm">Tidak ada tugas karena hari tanam tidak valid.</li>`; 
+            todayTasksList.innerHTML = `<li class="p-4 rounded-2xl bg-red-50 text-red-700 border border-red-200 font-bold text-sm">Tidak ada tugas karena hari tanam tidak valid.</li>`; 
             renderAllPhases(null); return; 
         } 
         
@@ -535,31 +821,31 @@ document.addEventListener('DOMContentLoaded', function () {
         
         if (!currentPhase) { 
             currentPhaseText.innerHTML = `Hari ke-${currentDay} belum masuk ke fase mana pun. Cek rentang fase di admin.`; 
-            todayTasksList.innerHTML = `<li class="p-4 rounded-2xl bg-white/50 backdrop-blur-sm text-slate-500 font-bold border border-white shadow-sm text-sm">Belum ada tugas untuk hari ini.</li>`; 
+            todayTasksList.innerHTML = `<li class="pp-task-item p-4 text-slate-500 font-bold text-sm">Belum ada tugas untuk hari ini.</li>`; 
             renderAllPhases(null); return; 
         } 
         
         currentPhaseText.innerHTML = ` 
             <div class="mb-2">Hari ke-<strong class="text-emerald-700 text-lg">${currentDay}</strong> berada pada fase <strong class="text-slate-900">${currentPhase.name}</strong>.</div> 
             <div class="text-[11px] uppercase font-black text-slate-400 tracking-wider mb-2">Rentang: Hari ${currentPhase.start_day} - Hari ${currentPhase.end_day}</div> 
-            <div class="text-xs font-bold text-slate-600 bg-white/50 p-2.5 rounded-xl border border-white/50 inline-block">${currentPhase.description || 'Tidak ada deskripsi fase.'}</div> 
+            <div class="text-xs font-bold text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-200 inline-block">${currentPhase.description || 'Tidak ada deskripsi fase.'}</div> 
         `; 
         
         const todayTasks = currentPhase.tasks.filter(task => shouldTaskAppear(task, currentDay)); 
         
         if (todayTasks.length === 0) { 
-            todayTasksList.innerHTML = `<li class="p-4 rounded-2xl bg-white/50 backdrop-blur-sm text-slate-500 font-bold border border-white shadow-sm text-sm text-center">🎉 Belum ada tugas yang dijadwalkan untuk hari ini.</li>`; 
+            todayTasksList.innerHTML = `<li class="pp-task-item p-4 text-slate-500 font-bold text-sm text-center">🎉 Belum ada tugas yang dijadwalkan untuk hari ini.</li>`; 
         } else { 
             todayTasks.forEach(task => { 
                 const li = document.createElement('li'); 
-                li.className = 'p-4 rounded-2xl bg-white/60 backdrop-blur-md border border-white shadow-sm hover:shadow-md hover:bg-white/80 transition-all'; 
+                li.className = 'pp-task-item p-4'; 
                 li.innerHTML = ` 
                     <div class="flex items-start gap-3"> 
                         <div class="p-2 bg-emerald-100/80 rounded-xl text-emerald-600 border border-emerald-200 shrink-0"> <i data-lucide="check-square" size="18"></i> </div> 
                         <div> 
                             <p class="font-black text-slate-800 tracking-tight">${task.title}</p> 
                             <p class="text-xs font-bold text-slate-500 mt-1 leading-relaxed">${task.description || ''}</p> 
-                            <span class="inline-block mt-2 text-[9px] bg-white/80 border border-white px-2 py-1 rounded-lg text-emerald-700 font-black uppercase tracking-widest shadow-sm"> Muncul: Hari ${task.start_day} - ${task.end_day} </span> 
+                            <span class="inline-block mt-2 text-[9px] bg-emerald-50 border border-emerald-100 px-2 py-1 rounded-lg text-emerald-700 font-black uppercase tracking-widest shadow-sm"> Muncul: Hari ${task.start_day} - ${task.end_day} </span> 
                         </div> 
                     </div> 
                 `; 
@@ -578,13 +864,13 @@ document.addEventListener('DOMContentLoaded', function () {
         activeGuide.phases.forEach(phase => { 
             const div = document.createElement('div'); 
             const isActive = activePhaseId === phase.id;
-            div.className = 'p-4 rounded-2xl border transition-all duration-300 ' + (isActive ? 'bg-emerald-100/70 border-emerald-300 shadow-md backdrop-blur-md scale-[1.02]' : 'bg-white/40 border-white/60 backdrop-blur-sm hover:bg-white/60'); 
+            div.className = 'pp-phase-item p-4 ' + (isActive ? 'pp-phase-item-active' : ''); 
             div.innerHTML = ` 
                 <div class="flex items-start justify-between gap-4"> 
                     <div class="w-full"> 
                         <h3 class="font-black ${isActive ? 'text-emerald-900 text-lg' : 'text-slate-700'} tracking-tight">${phase.name}</h3> 
                         <p class="text-[10px] font-black ${isActive ? 'text-emerald-700' : 'text-slate-400'} uppercase tracking-widest mt-1 mb-2"> Hari ${phase.start_day} - Hari ${phase.end_day} </p> 
-                        <p class="text-xs font-bold ${isActive ? 'text-emerald-800' : 'text-slate-500'} bg-white/40 p-2 rounded-xl">${phase.description || 'Tidak ada deskripsi'}</p> 
+                        <p class="text-xs font-bold ${isActive ? 'text-emerald-800' : 'text-slate-500'} bg-white/70 p-2 rounded-xl border border-white/80">${phase.description || 'Tidak ada deskripsi'}</p> 
                     </div> 
                     ${isActive ? '<span class="px-2.5 py-1 rounded-lg bg-emerald-500 text-white text-[9px] font-black uppercase tracking-widest shadow-sm shrink-0">Aktif</span>' : ''} 
                 </div> 
@@ -616,11 +902,5 @@ document.addEventListener('DOMContentLoaded', function () {
     
     setTimeout(() => { window.checkRotation(); }, 500); 
 }); 
-</script> 
-<style>
-    /* Keyframe untuk efek kilauan (shimmer) di progress bar */
-    @keyframes shimmer {
-        100% { transform: translateX(100%); }
-    }
-</style>
+</script>
 @endpush

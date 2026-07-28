@@ -90,12 +90,6 @@
                     <span>Pelaksanaan</span>
                 </a>
 
-                <a href="{{ route('riwayat-laporan.index') }}" class="sidebar-item {{ Route::is('riwayat-laporan.*') ? 'active' : '' }} flex items-center gap-3.5 px-4 py-3 rounded-2xl text-[13px] font-medium">
-                    <i data-lucide="file-text" class="w-[18px] h-[18px]"></i>
-                    <span>Riwayat Laporan</span>
-                    <span class="ml-auto w-[22px] h-[22px] bg-[#10B981] text-[#070D09] text-[10px] font-bold rounded-full flex items-center justify-center">1</span>
-                </a>
-
                 <a href="{{ route('laporan-keuangan.index') }}" class="sidebar-item {{ Route::is('laporan-keuangan.*') ? 'active' : '' }} flex items-center gap-3.5 px-4 py-3 rounded-2xl text-[13px] font-medium">
                     <i data-lucide="wallet-cards" class="w-[18px] h-[18px]"></i>
                     <span>Laporan Keuangan</span>
